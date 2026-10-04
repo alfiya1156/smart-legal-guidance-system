@@ -1,0 +1,274 @@
+/* =========================================
+   HOME PAGE ONLY
+========================================= */
+
+.home-page {
+    position: relative;
+
+    width: 100%;
+    height: 100vh;
+
+    overflow: hidden;
+}
+
+
+/* =========================================
+   HOME BACKGROUND IMAGE
+========================================= */
+
+.home-background {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    z-index: 0;
+}
+
+
+/* =========================================
+   HOME IMAGE OVERLAY
+========================================= */
+
+.home-overlay {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0, 0, 0, 0.20);
+
+    z-index: 1;
+}
+
+
+/* =========================================
+   HOME CONTENT
+========================================= */
+
+.home-content {
+    position: absolute;
+
+    top: 50%;
+    right: 5%;
+
+    transform: translateY(-50%);
+
+    width: 48%;
+
+    padding: 35px;
+
+    text-align: center;
+
+    background: rgba(0, 0, 0, 0.18);
+
+    backdrop-filter: blur(3px);
+
+    border-radius: 20px;
+
+    z-index: 2;
+}
+
+
+/* =========================================
+   JUSTICE ICON
+========================================= */
+
+.home-legal-icon {
+    font-size: 42px;
+
+    color: #ffd76a;
+
+    margin-bottom: 12px;
+}
+
+
+/* =========================================
+   HOME MAIN TITLE
+========================================= */
+
+.home-content h1 {
+    font-size: 65px;
+
+    line-height: 1.05;
+
+    font-weight: 800;
+
+    color: #ffe082;
+
+    margin: 0 0 20px;
+
+    text-shadow:
+        0 3px 8px rgba(0, 0, 0, 0.8);
+}
+
+
+/* =========================================
+   HOME SUB TITLE
+========================================= */
+
+.home-content h2 {
+    font-size: 40px;
+
+    color: #d4af7d;
+
+    font-weight: 700;
+
+    margin: 0 0 22px;
+
+    text-shadow:
+        0 3px 8px rgba(0, 0, 0, 0.9);
+}
+
+
+/* =========================================
+   DESCRIPTION
+========================================= */
+
+.home-description {
+    font-size: 25px;
+
+    color: white;
+
+    font-weight: 600;
+
+    line-height: 1.5;
+
+    margin: 0 0 28px;
+
+    text-shadow:
+        0 2px 7px rgba(0, 0, 0, 1);
+}
+
+
+/* =========================================
+   QUOTE
+========================================= */
+
+.home-quote {
+    font-family: Georgia, serif;
+
+    font-size: 23px;
+
+    line-height: 1.5;
+
+    font-weight: 600;
+
+    font-style: italic;
+
+    color: #ffe8a3;
+
+    margin: 0 0 32px;
+
+    text-shadow:
+        0 3px 8px rgba(0, 0, 0, 1);
+}
+
+
+/* =========================================
+   GET STARTED BUTTON
+========================================= */
+
+.home-get-started {
+    border: none;
+
+    padding: 16px 35px;
+
+    border-radius: 30px;
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    color: white;
+
+    background: #b8860b;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.5);
+
+    transition: 0.3s;
+}
+
+
+.home-get-started:hover {
+    background: #d4a017;
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1000px) {
+
+    .home-content {
+        width: 52%;
+
+        right: 3%;
+    }
+
+    .home-content h1 {
+        font-size: 45px;
+    }
+
+    .home-content h2 {
+        font-size: 27px;
+    }
+
+    .home-description {
+        font-size: 17px;
+    }
+
+    .home-quote {
+        font-size: 19px;
+    }
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 700px) {
+
+    .home-content {
+        width: 90%;
+
+        right: 5%;
+
+        padding: 30px 20px;
+    }
+
+    .home-content h1 {
+        font-size: 36px;
+    }
+
+    .home-content h2 {
+        font-size: 23px;
+    }
+
+    .home-description {
+        font-size: 15px;
+    }
+
+    .home-quote {
+        font-size: 17px;
+    }
+
+    .home-legal-icon {
+        font-size: 32px;
+    }
+}
