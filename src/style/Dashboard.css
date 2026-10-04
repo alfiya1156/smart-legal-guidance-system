@@ -14,196 +14,222 @@ html {
 body {
   margin: 0;
   padding: 0;
+  font-family: Georgia, "Times New Roman", serif;
 }
+
+
+/* =========================================
+   DASHBOARD PAGE
+========================================= */
 
 .dashboard-page {
   min-height: 100vh;
+
   background: #f8f1df;
+
   color: #4a2d0b;
+
   display: flex;
+
   font-family: Georgia, "Times New Roman", serif;
 }
 
 
 /* =========================================
    SIDEBAR
+   SAME STYLE AS EMERGENCY PAGE
 ========================================= */
 
-.dashboard-sidebar {
+.sidebar {
   width: 270px;
+
   min-height: 100vh;
 
   background:
     linear-gradient(
       180deg,
-      #3d2206 0%,
-      #5a350b 45%,
-      #3b2107 100%
+      #3b2417,
+      #4a2d1b,
+      #321e14
     );
 
-  color: #fff8e8;
+  color: #fff8ed;
+
+  padding: 28px 18px;
+
+  display: flex;
+
+  flex-direction: column;
 
   position: fixed;
+
   left: 0;
   top: 0;
   bottom: 0;
 
   z-index: 10;
 
-  padding: 24px 16px;
+  box-shadow:
+    8px 0 30px rgba(59, 36, 23, 0.15);
 
   overflow-y: auto;
-
-  box-shadow: 5px 0 25px rgba(78, 45, 7, 0.25);
 }
 
 
-/* Brand */
+/* =========================================
+   SIDEBAR LOGO
+========================================= */
 
-.sidebar-brand {
+.sidebar-logo {
   display: flex;
+
   align-items: center;
-  gap: 13px;
-  padding: 0 8px 26px;
+
+  gap: 12px;
+
+  padding: 8px 10px 28px;
+
+  border-bottom:
+    1px solid rgba(255, 221, 163, 0.18);
 }
 
-.brand-scale {
-  width: 50px;
-  height: 50px;
+.logo-symbol {
+  width: 45px;
+  height: 45px;
 
-  border-radius: 50%;
-
-  background: rgba(213, 166, 59, 0.22);
-
-  border: 1px solid rgba(242, 207, 122, 0.45);
+  border-radius: 12px;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
-  font-size: 31px;
-  color: #f5d77d;
+  background: #d7a94b;
+
+  color: #3b2417;
+
+  font-size: 25px;
+
+  font-weight: bold;
+
+  flex-shrink: 0;
 }
 
-.sidebar-brand h2 {
+.sidebar-logo h2 {
   margin: 0;
-  font-size: 18px;
-  color: #fff5dc;
+
+  font-size: 17px;
+
+  color: #f6d78c;
+
   font-weight: 700;
 }
 
-.sidebar-brand span {
-  display: block;
-  font-size: 13px;
-  color: #e8c978;
-  margin-top: 3px;
+.sidebar-logo span {
+  font-size: 11px;
+
+  color: #dfcdb5;
 }
 
 
-/* Menu */
+/* =========================================
+   SIDEBAR MENU
+========================================= */
 
 .sidebar-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  margin-top: 25px;
 }
 
-.sidebar-item {
+.menu-item {
   width: 100%;
 
   border: none;
+
   background: transparent;
 
-  color: #f8ead0;
+  color: #e8d8c4;
+
+  padding: 13px 14px;
+
+  margin-bottom: 7px;
+
+  border-radius: 11px;
 
   display: flex;
+
   align-items: center;
 
   gap: 13px;
 
-  padding: 12px 12px;
+  font-family: inherit;
 
-  border-radius: 8px;
+  font-size: 14px;
 
   cursor: pointer;
 
   text-align: left;
 
-  transition: 0.25s ease;
-
-  font-family: inherit;
+  transition: 0.3s ease;
 }
 
-.sidebar-item span {
-  width: 22px;
+.menu-item span:first-child {
+  width: 24px;
+
   text-align: center;
-  font-size: 18px;
+
+  font-size: 17px;
+
+  flex-shrink: 0;
 }
 
-.sidebar-item p {
-  margin: 0;
-  font-size: 14px;
+.menu-item span:last-child {
+  white-space: nowrap;
 }
 
-.sidebar-item:hover {
-  background: rgba(218, 170, 56, 0.18);
-  color: #fff4cd;
-  transform: translateX(2px);
+.menu-item:hover {
+  background:
+    rgba(215, 169, 75, 0.13);
+
+  color: #f5d68e;
+
+  transform: translateX(3px);
 }
 
-.sidebar-item.active {
+.menu-item.active {
   background:
     linear-gradient(
       90deg,
-      #c28b1c,
-      #a96f0c
+      #c99a42,
+      #a9782e
     );
 
-  color: white;
+  color: #fff;
 
   box-shadow:
-    inset 0 0 0 1px rgba(255, 228, 158, 0.25);
-}
-
-
-/* Divider */
-
-.sidebar-divider {
-  height: 1px;
-  background: rgba(231, 191, 91, 0.35);
-
-  margin: 18px 8px 10px;
-}
-
-
-/* Bottom */
-
-.sidebar-bottom {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-
-/* Quote */
-
-.sidebar-quote {
-  margin: 28px 12px 0;
-
-  text-align: center;
-
-  color: #dcbf82;
-
-  font-size: 11px;
-
-  line-height: 1.6;
-
-  font-style: italic;
+    0 8px 18px rgba(0, 0, 0, 0.18);
 }
 
 
 /* =========================================
-   MAIN
+   SIDEBAR BOTTOM
+========================================= */
+
+.sidebar-bottom {
+  margin-top: auto;
+
+  padding-top: 15px;
+
+  border-top:
+    1px solid rgba(255, 221, 163, 0.15);
+}
+
+.logout {
+  color: #e9c6b6;
+}
+
+
+/* =========================================
+   MAIN CONTENT
 ========================================= */
 
 .dashboard-main {
@@ -225,7 +251,7 @@ body {
 
 
 /* =========================================
-   HEADER
+   TOP HEADER
 ========================================= */
 
 .dashboard-header {
@@ -289,6 +315,7 @@ body {
 
 .user-info small {
   font-size: 11px;
+
   color: #806237;
 }
 
@@ -298,6 +325,7 @@ body {
 
 .user-arrow {
   color: #9a6910;
+
   margin-left: 7px;
 }
 
@@ -308,11 +336,15 @@ body {
 
 .dashboard-hero {
   height: 250px;
+
   overflow: hidden;
+
   position: relative;
 
   border: none;
+
   border-radius: 14px;
+
   box-shadow: none;
 }
 
@@ -335,25 +367,31 @@ body {
 
 .hero-overlay {
   position: absolute;
+
   inset: 0;
 
-  background: linear-gradient(
-    90deg,
-    rgba(0, 0, 0, 0.48) 0%,
-    rgba(0, 0, 0, 0.20) 45%,
-    rgba(0, 0, 0, 0.02) 100%
-  );
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.48) 0%,
+      rgba(0, 0, 0, 0.20) 45%,
+      rgba(0, 0, 0, 0.02) 100%
+    );
 }
 
 .hero-content {
   position: relative;
+
   z-index: 2;
 
   height: 100%;
+
   padding: 45px 65px;
 
   background: transparent;
+
   border: none;
+
   box-shadow: none;
 }
 
@@ -401,6 +439,7 @@ body {
   position: absolute;
 
   left: 28px;
+
   top: 22px;
 
   color: #b98b2a;
@@ -408,6 +447,8 @@ body {
   font-size: 48px;
 
   opacity: 0.4;
+
+  z-index: 2;
 }
 
 
@@ -447,7 +488,7 @@ body {
 
 
 /* =========================================
-   QUICK ACTION CARDS
+   QUICK ACTIONS
 ========================================= */
 
 .quick-actions {
@@ -575,7 +616,7 @@ body {
 
 
 /* =========================================
-   LOWER PANELS
+   LOWER CONTENT
 ========================================= */
 
 .dashboard-lower {
@@ -606,7 +647,9 @@ body {
 }
 
 
-/* Panel heading */
+/* =========================================
+   PANEL HEADING
+========================================= */
 
 .panel-heading {
   display: flex;
@@ -955,7 +998,7 @@ body {
 
 
 /* =========================================
-   RESPONSIVE
+   RESPONSIVE — TABLET
 ========================================= */
 
 @media (max-width: 1200px) {
@@ -971,16 +1014,20 @@ body {
 }
 
 
+/* =========================================
+   RESPONSIVE — SMALL LAPTOP
+========================================= */
+
 @media (max-width: 900px) {
 
-  .dashboard-sidebar {
-    width: 230px;
+  .sidebar {
+    width: 220px;
   }
 
   .dashboard-main {
-    margin-left: 230px;
+    margin-left: 220px;
 
-    width: calc(100% - 230px);
+    width: calc(100% - 220px);
 
     padding: 0 20px 35px;
   }
@@ -995,41 +1042,42 @@ body {
 }
 
 
+/* =========================================
+   RESPONSIVE — MOBILE
+========================================= */
+
 @media (max-width: 650px) {
 
-  .dashboard-sidebar {
-    width: 70px;
+  .sidebar {
+    position: relative;
 
-    padding: 15px 8px;
+    width: 100%;
+
+    min-height: auto;
+
+    padding: 20px 15px;
   }
 
-  .sidebar-brand h2,
-  .sidebar-brand span,
-  .sidebar-item p,
-  .sidebar-quote {
-    display: none;
+  .dashboard-page {
+    flex-direction: column;
   }
 
-  .sidebar-brand {
-    justify-content: center;
-
-    padding: 0 0 20px;
+  .sidebar-logo {
+    justify-content: flex-start;
   }
 
-  .sidebar-item {
-    justify-content: center;
-
-    padding: 12px 5px;
+  .sidebar-menu {
+    margin-top: 18px;
   }
 
-  .sidebar-item span {
-    font-size: 19px;
+  .sidebar-bottom {
+    margin-top: 10px;
   }
 
   .dashboard-main {
-    margin-left: 70px;
+    margin-left: 0;
 
-    width: calc(100% - 70px);
+    width: 100%;
 
     padding: 0 14px 25px;
   }

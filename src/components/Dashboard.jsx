@@ -13,10 +13,10 @@ function Dashboard() {
       path: "/ai-assistant",
     },
     {
-      icon: "⚖",
+      icon: "⚖️",
       title: "Know My Rights",
       text: "Explore important rights available to Indian citizens.",
-      path: "/rights",
+      path: "/know-my-rights",
     },
     {
       icon: "📞",
@@ -39,7 +39,7 @@ function Dashboard() {
       text: "Know your constitutional rights",
     },
     {
-      icon: "🛡",
+      icon: "🛡️",
       title: "Consumer Rights",
       text: "Be aware. Be protected.",
     },
@@ -54,7 +54,7 @@ function Dashboard() {
       text: "Stay safe in the digital world",
     },
     {
-      icon: "⚖",
+      icon: "⚖️",
       title: "Legal Aid",
       text: "Access to justice for all",
     },
@@ -81,125 +81,145 @@ function Dashboard() {
     },
   ];
 
-  const handleAction = (path) => {
+  const handleNavigation = (path) => {
     navigate(path);
   };
 
   return (
     <div className="dashboard-page">
 
-      {/* SIDEBAR */}
-      <aside className="dashboard-sidebar">
+      {/* ================= SIDEBAR ================= */}
 
-        <div className="sidebar-brand">
-          <div className="brand-scale">⚖</div>
+      <aside className="sidebar">
+
+        <div className="sidebar-logo">
+
+          <div className="logo-symbol">
+            ⚖
+          </div>
 
           <div>
             <h2>Smart Legal</h2>
             <span>Guidance System</span>
           </div>
+
         </div>
 
-        <nav className="sidebar-menu">
 
-          <button className="sidebar-item active">
-            <span>⌂</span>
-            <p>Dashboard</p>
-          </button>
+        <div className="sidebar-menu">
+
+          {/* Dashboard */}
 
           <button
-            className="sidebar-item"
-            onClick={() => handleAction("/ai-assistant")}
+            className="menu-item active"
+            onClick={() => handleNavigation("/dashboard")}
+          >
+            <span>🏠</span>
+            <span>Dashboard</span>
+          </button>
+
+
+          {/* AI Assistant */}
+
+          <button
+            className="menu-item"
+            onClick={() => handleNavigation("/ai-assistant")}
           >
             <span>🤖</span>
-            <p>AI Legal Assistant</p>
+            <span>AI Assistant</span>
           </button>
 
+
+          {/* Know My Rights */}
+
           <button
-            className="sidebar-item"
-            onClick={() => handleAction("/rights")}
+            className="menu-item"
+            onClick={() => handleNavigation("/know-my-rights")}
           >
-            <span>⚖</span>
-            <p>Know My Rights</p>
+            <span>⚖️</span>
+            <span>Know My Rights</span>
           </button>
 
+
+          {/* Emergency */}
+
           <button
-            className="sidebar-item"
-            onClick={() => handleAction("/emergency")}
+            className="menu-item"
+            onClick={() => handleNavigation("/emergency")}
           >
-            <span>📞</span>
-            <p>Emergency Assistance</p>
+            <span>🚨</span>
+            <span>Emergency Assistance</span>
           </button>
 
+
+          {/* Location */}
+
           <button
-            className="sidebar-item"
-            onClick={() => handleAction("/location")}
+            className="menu-item"
+            onClick={() => handleNavigation("/location")}
           >
             <span>📍</span>
-            <p>Location Tracker</p>
+            <span>Location Tracker</span>
           </button>
 
+
+          {/* Forms */}
+
           <button
-            className="sidebar-item"
-            onClick={() => handleAction("/forms")}
+            className="menu-item"
+            onClick={() => handleNavigation("/forms")}
           >
             <span>📄</span>
-            <p>Forms Generator</p>
+            <span>Forms Generator</span>
           </button>
+
+
+          {/* Scanner */}
 
           <button
-            className="sidebar-item"
-            onClick={() => handleAction("/scanner")}
+            className="menu-item"
+            onClick={() => handleNavigation("/scanner")}
           >
-            <span>▣</span>
-            <p>Document Scanner</p>
+            <span>📑</span>
+            <span>Document Scanner</span>
           </button>
 
-          <button
-            className="sidebar-item"
-            onClick={() => handleAction("/voice")}
-          >
-            <span>🎙</span>
-            <p>Voice Interaction</p>
-          </button>
+        </div>
 
-        </nav>
 
-        <div className="sidebar-divider"></div>
+        {/* Bottom */}
 
         <div className="sidebar-bottom">
 
           <button
-            className="sidebar-item"
-            onClick={() => handleAction("/profile")}
+            className="menu-item"
+            onClick={() => handleNavigation("/profile")}
           >
-            <span>●</span>
-            <p>Profile</p>
+            <span>👤</span>
+            <span>Profile</span>
           </button>
+
 
           <button
-            className="sidebar-item"
-            onClick={() => navigate("/login")}
+            className="menu-item logout"
+            onClick={() => handleNavigation("/")}
           >
-            <span>⇥</span>
-            <p>Logout</p>
+            <span>↪</span>
+            <span>Logout</span>
           </button>
 
         </div>
-
-        <div className="sidebar-quote">
-          "Justice is not a privilege,
-          it is a right for every citizen."
-        </div>
-
 
       </aside>
 
 
-      {/* MAIN CONTENT */}
+      {/* ================= MAIN CONTENT ================= */}
+
       <main className="dashboard-main">
 
+
         {/* TOP HEADER */}
+
         <header className="dashboard-header">
 
           <div className="header-small-logo">
@@ -217,7 +237,9 @@ function Dashboard() {
               <strong>Alfiya</strong>
             </div>
 
-            <span className="user-arrow">⌄</span>
+            <span className="user-arrow">
+              ⌄
+            </span>
 
           </div>
 
@@ -225,6 +247,7 @@ function Dashboard() {
 
 
         {/* HERO SECTION */}
+
         <section className="dashboard-hero">
 
           <img
@@ -235,7 +258,9 @@ function Dashboard() {
 
           <div className="hero-overlay"></div>
 
-          <div className="hero-decoration">❧</div>
+          <div className="hero-decoration">
+            ❧
+          </div>
 
           <div className="hero-content">
 
@@ -263,6 +288,7 @@ function Dashboard() {
 
 
         {/* QUICK ACTIONS */}
+
         <section className="dashboard-section">
 
           <div className="section-heading">
@@ -270,24 +296,36 @@ function Dashboard() {
             <span></span>
           </div>
 
+
           <div className="quick-actions">
 
             {quickActions.map((item, index) => (
+
               <div
                 className="action-card"
                 key={index}
-                onClick={() => handleAction(item.path)}
+                onClick={() => handleNavigation(item.path)}
               >
 
                 <div className="action-icon">
                   {item.icon}
                 </div>
 
-                <h3>{item.title}</h3>
+                <h3>
+                  {item.title}
+                </h3>
 
-                <p>{item.text}</p>
+                <p>
+                  {item.text}
+                </p>
 
-                <button className="action-arrow">
+                <button
+                  className="action-arrow"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNavigation(item.path);
+                  }}
+                >
                   →
                 </button>
 
@@ -296,6 +334,7 @@ function Dashboard() {
                 </div>
 
               </div>
+
             ))}
 
           </div>
@@ -304,9 +343,12 @@ function Dashboard() {
 
 
         {/* LOWER CONTENT */}
+
         <section className="dashboard-lower">
 
+
           {/* RECENT ACTIVITY */}
+
           <div className="info-panel">
 
             <div className="panel-heading">
@@ -322,23 +364,38 @@ function Dashboard() {
 
             </div>
 
+
             <div className="activity-list">
 
               {recentActivities.map((item, index) => (
-                <div className="activity-item" key={index}>
+
+                <div
+                  className="activity-item"
+                  key={index}
+                >
 
                   <div className="activity-icon">
                     {item.icon}
                   </div>
 
                   <div className="activity-content">
-                    <strong>{item.title}</strong>
-                    <p>{item.text}</p>
+
+                    <strong>
+                      {item.title}
+                    </strong>
+
+                    <p>
+                      {item.text}
+                    </p>
+
                   </div>
 
-                  <small>{item.date}</small>
+                  <small>
+                    {item.date}
+                  </small>
 
                 </div>
+
               ))}
 
             </div>
@@ -347,6 +404,7 @@ function Dashboard() {
 
 
           {/* LEGAL AWARENESS */}
+
           <div className="info-panel awareness-panel">
 
             <div className="panel-heading">
@@ -358,18 +416,30 @@ function Dashboard() {
 
             </div>
 
+
             <div className="awareness-list">
 
               {awarenessItems.map((item, index) => (
-                <div className="awareness-item" key={index}>
+
+                <div
+                  className="awareness-item"
+                  key={index}
+                >
 
                   <div className="awareness-icon">
                     {item.icon}
                   </div>
 
                   <div>
-                    <strong>{item.title}</strong>
-                    <p>{item.text}</p>
+
+                    <strong>
+                      {item.title}
+                    </strong>
+
+                    <p>
+                      {item.text}
+                    </p>
+
                   </div>
 
                   <span className="awareness-arrow">
@@ -377,6 +447,7 @@ function Dashboard() {
                   </span>
 
                 </div>
+
               ))}
 
             </div>
@@ -387,6 +458,7 @@ function Dashboard() {
 
 
         {/* EMERGENCY BAR */}
+
         <section className="emergency-bar">
 
           <div className="emergency-left">
@@ -396,16 +468,22 @@ function Dashboard() {
             </div>
 
             <div>
-              <h3>Need Immediate Help?</h3>
+
+              <h3>
+                Need Immediate Help?
+              </h3>
+
               <p>
                 Access emergency assistance and important support contacts.
               </p>
+
             </div>
 
           </div>
 
+
           <button
-            onClick={() => handleAction("/emergency")}
+            onClick={() => handleNavigation("/emergency")}
           >
             View Emergency Contacts →
           </button>
@@ -414,6 +492,7 @@ function Dashboard() {
 
 
         {/* FOOTER */}
+
         <footer className="dashboard-footer">
 
           <span></span>
