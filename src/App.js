@@ -9,6 +9,9 @@ import AIAssistant from "./components/AIAssistant";
 import KnowMyRights from "./components/KnowMyRights";
 import Emergency from "./components/Emergency";
 import Location from "./components/Location";
+import FormGenerator from "./components/FormGenerator";
+import DocumentScanner from "./components/DocumentScanner";
+import Profile from "./components/Profile";
 
 
 function App() {
@@ -23,6 +26,9 @@ function App() {
         <Route path="/Know-my-rights" element={<KnowMyRights />} />
         <Route path="/emergency" element={<Emergency />} />
         <Route path="/location" element={<Location />} />
+        <Route path="/forms" element={<FormGenerator />} />
+        <Route path="/scanner" element={<DocumentScanner />} />
+        <Route path="/profile" element={<Profile />} />
 
       </Routes>
     </BrowserRouter>

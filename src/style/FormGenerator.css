@@ -1,0 +1,464 @@
+/* =========================================
+   FORM GENERATOR PAGE
+========================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f6f0e5;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #3d2a1c;
+}
+
+/* =========================================
+   MAIN PAGE
+========================================= */
+
+.form-generator-page {
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    #f7f1e7,
+    #efe2ce,
+    #f8f2e9
+  );
+}
+
+/* =========================================
+   SIDEBAR - EXACT DESIGN
+========================================= */
+
+.sidebar {
+  width: 270px;
+  min-height: 100vh;
+  background: linear-gradient(
+    180deg,
+    #3b2417,
+    #4a2d1b,
+    #321e14
+  );
+  color: #fff8ed;
+  padding: 28px 18px;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  box-shadow: 8px 0 30px rgba(59, 36, 23, 0.15);
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px 28px;
+  border-bottom: 1px solid rgba(255, 221, 163, 0.18);
+}
+
+.logo-symbol {
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #d7a94b;
+  color: #3b2417;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.sidebar-logo h2 {
+  margin: 0;
+  font-size: 17px;
+  color: #f6d78c;
+}
+
+.sidebar-logo span {
+  font-size: 11px;
+  color: #dfcdb5;
+}
+
+.sidebar-menu {
+  margin-top: 25px;
+}
+
+.menu-item {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: #e8d8c4;
+  padding: 13px 14px;
+  margin-bottom: 7px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: 0.3s;
+}
+
+.menu-item span:first-child {
+  width: 24px;
+  text-align: center;
+  font-size: 17px;
+}
+
+.menu-item:hover {
+  background: rgba(215, 169, 75, 0.13);
+  color: #f5d68e;
+  transform: translateX(3px);
+}
+
+.menu-item.active {
+  background: linear-gradient(
+    90deg,
+    #c99a42,
+    #a9782e
+  );
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 221, 163, 0.15);
+}
+
+.logout {
+  color: #e9c6b6;
+}
+
+/* =========================================
+   MAIN CONTENT
+========================================= */
+
+.form-generator-main {
+  margin-left: 270px;
+  width: calc(100% - 270px);
+  min-height: 100vh;
+  padding: 42px 48px;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.form-generator-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.form-small-title {
+  margin: 0 0 8px;
+  color: #a9782e;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.form-generator-header h1 {
+  margin: 0;
+  font-size: 36px;
+  color: #3b2417;
+}
+
+.form-generator-header h1 span {
+  color: #b7832f;
+}
+
+.form-header-description {
+  margin: 9px 0 0;
+  color: #776452;
+  font-size: 15px;
+}
+
+.form-header-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 18px;
+  background: linear-gradient(
+    135deg,
+    #e0b85c,
+    #b98532
+  );
+  color: #3b2417;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32px;
+  box-shadow: 0 12px 25px rgba(112, 75, 24, 0.18);
+}
+
+/* =========================================
+   INFO BANNER
+========================================= */
+
+.form-info-banner {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: rgba(255, 250, 241, 0.9);
+  border: 1px solid #e2c99d;
+  border-left: 5px solid #c99a42;
+  border-radius: 15px;
+  padding: 19px 22px;
+  margin-bottom: 32px;
+  box-shadow: 0 8px 25px rgba(75, 48, 25, 0.06);
+}
+
+.form-info-icon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: #f1dfb9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 23px;
+}
+
+.form-info-banner h3 {
+  margin: 0 0 5px;
+  color: #4a2d1b;
+  font-size: 17px;
+}
+
+.form-info-banner p {
+  margin: 0;
+  color: #776452;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* =========================================
+   SECTION HEADING
+========================================= */
+
+.forms-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.forms-section-heading h2 {
+  margin: 0;
+  color: #3b2417;
+  font-size: 23px;
+}
+
+.forms-section-heading p {
+  margin: 6px 0 0;
+  color: #806d59;
+  font-size: 13px;
+}
+
+.forms-count {
+  background: #ead6aa;
+  color: #79541f;
+  border: 1px solid #d4b777;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* =========================================
+   FORM CARDS
+========================================= */
+
+.forms-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.form-card {
+  background: rgba(255, 252, 246, 0.96);
+  border: 1px solid #e2d0b2;
+  border-radius: 18px;
+  padding: 25px;
+  min-height: 275px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  box-shadow: 0 9px 25px rgba(75, 48, 25, 0.07);
+  transition: 0.3s ease;
+}
+
+.form-card:hover {
+  transform: translateY(-6px);
+  border-color: #c99a42;
+  box-shadow: 0 16px 32px rgba(75, 48, 25, 0.13);
+}
+
+.form-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.form-card-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 15px;
+  background: #f1dfb9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 29px;
+}
+
+.form-card-number {
+  font-size: 12px;
+  font-weight: 700;
+  color: #b38a48;
+  background: #faf3e4;
+  padding: 6px 9px;
+  border-radius: 8px;
+}
+
+.form-card h3 {
+  margin: 0 0 10px;
+  color: #3d281a;
+  font-size: 19px;
+}
+
+.form-card p {
+  margin: 0;
+  color: #786754;
+  font-size: 13px;
+  line-height: 1.7;
+  flex: 1;
+}
+
+.form-card-button {
+  margin-top: 22px;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 15px;
+  background: linear-gradient(
+    90deg,
+    #c99a42,
+    #a9782e
+  );
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: 0.3s;
+}
+
+.form-card-button:hover {
+  background: linear-gradient(
+    90deg,
+    #b88731,
+    #91631f
+  );
+}
+
+.form-card-button span {
+  font-size: 18px;
+}
+
+/* =========================================
+   DISCLAIMER
+========================================= */
+
+.form-generator-disclaimer {
+  margin-top: 30px;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  background: rgba(246, 232, 202, 0.7);
+  border: 1px solid #ddc695;
+  border-radius: 15px;
+  padding: 19px 22px;
+}
+
+.disclaimer-symbol {
+  font-size: 23px;
+}
+
+.form-generator-disclaimer h3 {
+  margin: 0 0 6px;
+  color: #60401e;
+  font-size: 15px;
+}
+
+.form-generator-disclaimer p {
+  margin: 0;
+  color: #76634f;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1100px) {
+  .forms-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .sidebar {
+    width: 220px;
+  }
+
+  .form-generator-main {
+    margin-left: 220px;
+    width: calc(100% - 220px);
+    padding: 30px 25px;
+  }
+
+  .forms-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .sidebar {
+    position: relative;
+    width: 100%;
+    min-height: auto;
+  }
+
+  .form-generator-main {
+    margin-left: 0;
+    width: 100%;
+    padding: 25px 18px;
+  }
+
+  .form-generator-header {
+    align-items: flex-start;
+  }
+
+  .form-generator-header h1 {
+    font-size: 29px;
+  }
+
+  .form-header-icon {
+    width: 55px;
+    height: 55px;
+    font-size: 25px;
+  }
+}
