@@ -8,17 +8,14 @@ function Home() {
   return (
     <div className="home-page">
 
-      {/* HOME BACKGROUND IMAGE ONLY */}
       <img
         src="/legal-img.jpeg"
         alt="Legal Guidance"
         className="home-background"
       />
 
-      {/* DARK OVERLAY */}
       <div className="home-overlay"></div>
 
-      {/* HOME CONTENT */}
       <div className="home-content">
 
         <div className="home-legal-icon">⚖</div>

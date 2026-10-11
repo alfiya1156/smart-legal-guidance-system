@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { trackActivity } from "../utils/activityTracker";
 import "../style/AIAssistant.css";
 
 function AIAssistant() {
@@ -19,6 +20,8 @@ function AIAssistant() {
       type: "user",
       text: message,
     };
+
+    trackActivity("Legal question submitted", "AI Assistant");
 
     setMessages((prev) => [...prev, newMessage]);
     setMessage("");
@@ -75,11 +78,7 @@ function AIAssistant() {
   return (
     <div className="ai-page">
 
-      {/* ================= SIDEBAR ================= */}
-
       <aside className="sidebar">
-
-        {/* LOGO */}
 
         <div className="sidebar-logo">
 
@@ -94,12 +93,7 @@ function AIAssistant() {
 
         </div>
 
-
-        {/* MENU */}
-
         <div className="sidebar-menu">
-
-          {/* Dashboard */}
 
           <button
             className="menu-item"
@@ -109,9 +103,6 @@ function AIAssistant() {
             <span>Dashboard</span>
           </button>
 
-
-          {/* AI Assistant */}
-
           <button
             className="menu-item active"
             onClick={() => handleNavigation("/ai-assistant")}
@@ -119,9 +110,6 @@ function AIAssistant() {
             <span>🤖</span>
             <span>AI Assistant</span>
           </button>
-
-
-          {/* Know My Rights */}
 
           <button
             className="menu-item"
@@ -131,9 +119,6 @@ function AIAssistant() {
             <span>Know My Rights</span>
           </button>
 
-
-          {/* Emergency */}
-
           <button
             className="menu-item"
             onClick={() => handleNavigation("/emergency")}
@@ -141,9 +126,6 @@ function AIAssistant() {
             <span>🚨</span>
             <span>Emergency Assistance</span>
           </button>
-
-
-          {/* Location */}
 
           <button
             className="menu-item"
@@ -153,9 +135,6 @@ function AIAssistant() {
             <span>Location Tracker</span>
           </button>
 
-
-          {/* Forms */}
-
           <button
             className="menu-item"
             onClick={() => handleNavigation("/forms")}
@@ -163,9 +142,6 @@ function AIAssistant() {
             <span>📄</span>
             <span>Forms Generator</span>
           </button>
-
-
-          {/* Scanner */}
 
           <button
             className="menu-item"
@@ -176,9 +152,6 @@ function AIAssistant() {
           </button>
 
         </div>
-
-
-        {/* BOTTOM */}
 
         <div className="sidebar-bottom">
 
@@ -203,12 +176,7 @@ function AIAssistant() {
 
       </aside>
 
-
-      {/* ================= MAIN CONTENT ================= */}
-
       <main className="ai-main">
-
-        {/* HEADER */}
 
         <header className="ai-header">
 
@@ -261,9 +229,6 @@ function AIAssistant() {
 
         </header>
 
-
-        {/* LEGAL QUOTE */}
-
         <section className="legal-quote">
 
           <div className="quote-icon">
@@ -279,9 +244,6 @@ function AIAssistant() {
           </div>
 
         </section>
-
-
-        {/* QUICK START */}
 
         <section className="quick-section">
 
@@ -332,12 +294,7 @@ function AIAssistant() {
 
         </section>
 
-
-        {/* CHAT CONTAINER */}
-
         <section className="chat-container">
-
-          {/* CHAT HEADER */}
 
           <div className="chat-header">
 
@@ -371,9 +328,6 @@ function AIAssistant() {
             </button>
 
           </div>
-
-
-          {/* CHAT BODY */}
 
           <div className="chat-body">
 
@@ -438,9 +392,6 @@ function AIAssistant() {
 
           </div>
 
-
-          {/* INPUT */}
-
           <div className="chat-input-area">
 
             <button className="attach-btn">
@@ -470,9 +421,6 @@ function AIAssistant() {
             </button>
 
           </div>
-
-
-          {/* DISCLAIMER */}
 
           <div className="legal-disclaimer">
 

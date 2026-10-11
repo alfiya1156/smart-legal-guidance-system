@@ -6,7 +6,6 @@
 
     position: relative;
 
-
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -39,8 +38,6 @@
     z-index: 10;
 }
 
-
-/* Brand */
 
 .signup-nav-brand {
     display: flex;
@@ -86,8 +83,6 @@
 }
 
 
-/* Back */
-
 .signup-back-button {
     padding: 10px 22px;
 
@@ -116,9 +111,6 @@
 }
 
 
-/* ================================
-   SIGNUP MAIN
-================================ */
 
 .signup-main {
     width: 100%;
@@ -136,10 +128,6 @@
     z-index: 2;
 }
 
-
-/* ================================
-   SIGNUP CARD
-================================ */
 
 .signup-card {
     width: 450px;
@@ -161,7 +149,6 @@
 }
 
 
-/* Icon */
 
 .signup-card-icon {
     font-size: 38px;
@@ -171,8 +158,6 @@
     margin-bottom: 5px;
 }
 
-
-/* Heading */
 
 .signup-card h1 {
     font-size: 30px;
@@ -187,8 +172,6 @@
 }
 
 
-/* Subtitle */
-
 .signup-subtitle {
     color: #666;
 
@@ -200,9 +183,6 @@
 }
 
 
-/* ================================
-   INPUTS
-================================ */
 
 .signup-input-group {
     text-align: left;
@@ -260,10 +240,6 @@
 }
 
 
-/* ================================
-   SIGNUP BUTTON
-================================ */
-
 .signup-button {
     width: 100%;
 
@@ -299,9 +275,42 @@
 }
 
 
-/* ================================
-   LOGIN TEXT
-================================ */
+.signup-message {
+    width: 100%;
+
+    margin-top: 12px;
+
+    padding: 10px 12px;
+
+    border-radius: 8px;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    text-align: center;
+
+    box-sizing: border-box;
+}
+
+
+.error-message {
+    color: #b42318;
+
+    background: #fde8e7;
+
+    border: 1px solid #f1a7a3;
+}
+
+
+.success-message {
+    color: #187a3d;
+
+    background: #e8f7ed;
+
+    border: 1px solid #9ed5af;
+}
+
 
 .signup-login-text {
     margin: 17px 0 0 0;
@@ -326,11 +335,6 @@
 .signup-login-text span:hover {
     text-decoration: underline;
 }
-
-
-/* ================================
-   RESPONSIVE
-================================ */
 
 @media (max-width: 700px) {
 

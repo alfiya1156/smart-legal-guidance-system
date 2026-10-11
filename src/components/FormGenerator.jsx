@@ -50,7 +50,6 @@ function FormGenerator() {
   return (
     <div className="form-generator-page">
 
-      {/* ================= SIDEBAR ================= */}
       <aside className="sidebar">
         <div className="sidebar-logo">
           <div className="logo-symbol">⚖</div>
@@ -142,7 +141,6 @@ function FormGenerator() {
         </div>
       </aside>
 
-      {/* ================= MAIN CONTENT ================= */}
       <main className="form-generator-main">
 
         <div className="form-generator-header">
@@ -168,7 +166,6 @@ function FormGenerator() {
 
         </div>
 
-        {/* ================= INFO BANNER ================= */}
         <div className="form-info-banner">
 
           <div className="form-info-icon">
@@ -185,8 +182,6 @@ function FormGenerator() {
           </div>
 
         </div>
-
-        {/* ================= FORM CARDS ================= */}
         <section className="forms-section">
 
           <div className="forms-section-heading">
@@ -249,7 +244,6 @@ function FormGenerator() {
 
         </section>
 
-        {/* ================= NOTICE ================= */}
         <div className="form-generator-disclaimer">
 
           <div className="disclaimer-symbol">

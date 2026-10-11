@@ -7,30 +7,65 @@ function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
 
-  const handleLogin = (e) => {
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
+
+  const handleLogin = async (e) => {
     e.preventDefault();
 
+    // Clear previous message
     setMessage("");
+    setMessageType("");
 
-    // Simple frontend validation
+    // Frontend validation
     if (!email || !password) {
       setMessage("Please enter email and password");
+      setMessageType("error");
       return;
     }
 
-    // Temporary login
-    // Backend connect later
-    localStorage.setItem(
-      "user",
-      JSON.stringify({
-        email: email,
-      })
-    );
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        }
+      );
 
-    // Go to Dashboard
-    navigate("/dashboard");
+      const data = await response.json();
+
+      if (response.ok) {
+        // Store complete logged-in user details
+        localStorage.setItem(
+          "user",
+          JSON.stringify(data.user)
+        );
+
+        setMessage("Login successful!");
+        setMessageType("success");
+
+        // Go to Dashboard after short delay
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1000);
+      } else {
+        setMessage(data.message || "Invalid email or password");
+        setMessageType("error");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+
+      setMessage("Unable to connect to server");
+      setMessageType("error");
+    }
   };
 
   return (
@@ -102,10 +137,17 @@ function Login() {
               />
             </div>
 
+            {/* LOGIN MESSAGE */}
             {message && (
-              <p className="login-message">
+              <div
+                className={
+                  messageType === "success"
+                    ? "login-message success-login-message"
+                    : "login-message error-login-message"
+                }
+              >
                 {message}
-              </p>
+              </div>
             )}
 
             <button
@@ -133,4 +175,7 @@ function Login() {
 }
 
 export default Login;
+
+
+
 

@@ -12,11 +12,6 @@ function Profile() {
   return (
     <div className="profile-page">
 
-      {/* =====================================================
-          SIDEBAR / NAVBAR
-          SAME AS YOUR EMERGENCY PAGE
-      ===================================================== */}
-
       <aside className="sidebar">
 
         <div className="sidebar-logo">
@@ -111,13 +106,7 @@ function Profile() {
       </aside>
 
 
-      {/* =====================================================
-          MAIN PROFILE CONTENT
-      ===================================================== */}
-
       <main className="profile-main">
-
-        {/* PAGE HEADER */}
 
         <div className="profile-header">
 
@@ -142,10 +131,6 @@ function Profile() {
 
         </div>
 
-
-        {/* =====================================================
-            PROFILE HERO
-        ===================================================== */}
 
         <section className="profile-hero">
 
@@ -193,11 +178,6 @@ function Profile() {
           </div>
 
         </section>
-
-
-        {/* =====================================================
-            PROFILE STATISTICS
-        ===================================================== */}
 
         <section className="profile-stat-grid">
 
@@ -259,10 +239,6 @@ function Profile() {
         </section>
 
 
-        {/* =====================================================
-            PERSONAL INFORMATION
-        ===================================================== */}
-
         <section className="profile-card">
 
           <div className="card-header">
@@ -319,10 +295,6 @@ function Profile() {
 
         </section>
 
-
-        {/* =====================================================
-            LEGAL SERVICES
-        ===================================================== */}
 
         <section className="profile-card">
 

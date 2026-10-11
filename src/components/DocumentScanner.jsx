@@ -51,7 +51,6 @@ function DocumentScanner() {
   return (
     <div className="document-scanner-page">
 
-      {/* ================= SIDEBAR - SAME NAVBAR ================= */}
       <aside className="sidebar">
 
         <div className="sidebar-logo">
@@ -145,8 +144,6 @@ function DocumentScanner() {
 
       </aside>
 
-      {/* ================= MAIN CONTENT ================= */}
-
       <main className="document-scanner-main">
 
         <div className="scanner-header">
@@ -172,8 +169,6 @@ function DocumentScanner() {
 
         </div>
 
-        {/* ================= INFO BANNER ================= */}
-
         <div className="scanner-info-banner">
 
           <div className="scanner-info-icon">
@@ -190,8 +185,6 @@ function DocumentScanner() {
           </div>
 
         </div>
-
-        {/* ================= UPLOAD SECTION ================= */}
 
         <section className="scanner-card">
 
@@ -254,8 +247,6 @@ function DocumentScanner() {
 
           </div>
 
-          {/* ================= SELECTED FILE ================= */}
-
           {selectedFile && (
 
             <div className="selected-file">
@@ -292,8 +283,6 @@ function DocumentScanner() {
           </button>
 
         </section>
-
-        {/* ================= RISK RESULT ================= */}
 
         {scanned && (
 

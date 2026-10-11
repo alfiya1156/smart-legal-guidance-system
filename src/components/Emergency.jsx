@@ -120,7 +120,6 @@ function Emergency() {
   return (
     <div className="emergency-page">
 
-      {/* Sidebar */}
       <aside className="sidebar">
 
         <div className="sidebar-logo">
@@ -214,10 +213,8 @@ function Emergency() {
 
       </aside>
 
-      {/* Main Content */}
       <main className="emergency-main">
 
-        {/* Header */}
         <div className="emergency-header">
 
           <div>
@@ -241,7 +238,6 @@ function Emergency() {
 
         </div>
 
-        {/* Emergency Alert */}
         <div className="emergency-alert">
 
           <div className="alert-icon">
@@ -260,7 +256,6 @@ function Emergency() {
 
         </div>
 
-        {/* Section Heading */}
         <div className="section-heading">
 
           <div>
@@ -278,7 +273,6 @@ function Emergency() {
 
         </div>
 
-        {/* Emergency Cards */}
         <div className="emergency-grid">
 
           {emergencyNumbers.map((item, index) => (
@@ -324,7 +318,6 @@ function Emergency() {
 
         </div>
 
-        {/* Disclaimer */}
         <div className="emergency-disclaimer">
 
           <div className="disclaimer-icon">

@@ -9,9 +9,6 @@ body {
   color: #3d2a1c;
 }
 
-/* =========================================
-   MAIN PAGE
-========================================= */
 
 .document-scanner-page {
   min-height: 100vh;
@@ -22,10 +19,6 @@ body {
     #f8f2e9
   );
 }
-
-/* =========================================
-   SIDEBAR - SAME DESIGN
-========================================= */
 
 .sidebar {
   width: 270px;
@@ -132,20 +125,12 @@ body {
   color: #e9c6b6;
 }
 
-/* =========================================
-   MAIN CONTENT
-========================================= */
-
 .document-scanner-main {
   margin-left: 270px;
   width: calc(100% - 270px);
   min-height: 100vh;
   padding: 42px 48px;
 }
-
-/* =========================================
-   HEADER
-========================================= */
 
 .scanner-header {
   display: flex;
@@ -195,10 +180,6 @@ body {
   box-shadow: 0 12px 25px rgba(112, 75, 24, 0.18);
 }
 
-/* =========================================
-   INFO BANNER
-========================================= */
-
 .scanner-info-banner {
   display: flex;
   align-items: center;
@@ -235,10 +216,6 @@ body {
   line-height: 1.6;
 }
 
-/* =========================================
-   SCANNER CARD
-========================================= */
-
 .scanner-card {
   background: rgba(255, 252, 246, 0.96);
   border: 1px solid #e2d0b2;
@@ -274,10 +251,6 @@ body {
   font-size: 11px;
   font-weight: 700;
 }
-
-/* =========================================
-   UPLOAD AREA
-========================================= */
 
 .upload-area {
   border: 2px dashed #d3b77e;
@@ -343,10 +316,6 @@ body {
   transform: translateY(-2px);
 }
 
-/* =========================================
-   SELECTED FILE
-========================================= */
-
 .selected-file {
   margin-top: 20px;
   display: flex;
@@ -396,10 +365,6 @@ body {
   cursor: pointer;
 }
 
-/* =========================================
-   SCAN BUTTON
-========================================= */
-
 .scan-document-button {
   width: 100%;
   margin-top: 20px;
@@ -426,10 +391,6 @@ body {
   opacity: 0.5;
   cursor: not-allowed;
 }
-
-/* =========================================
-   RISK RESULT
-========================================= */
 
 .risk-result-card {
   margin-top: 28px;
@@ -473,9 +434,6 @@ body {
   font-size: 24px;
 }
 
-/* =========================================
-   DOCUMENT RESULT INFO
-========================================= */
 
 .document-result-info {
   display: grid;
@@ -507,10 +465,6 @@ body {
 .review-status {
   color: #a9782e !important;
 }
-
-/* =========================================
-   RISK ITEMS
-========================================= */
 
 .risk-list {
   display: grid;
@@ -551,10 +505,6 @@ body {
   line-height: 1.6;
 }
 
-/* =========================================
-   NOTICE
-========================================= */
-
 .risk-notice {
   display: flex;
   gap: 12px;
@@ -575,10 +525,6 @@ body {
   font-size: 12px;
   line-height: 1.6;
 }
-
-/* =========================================
-   RESPONSIVE
-========================================= */
 
 @media (max-width: 1000px) {
   .risk-list {

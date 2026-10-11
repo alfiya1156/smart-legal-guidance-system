@@ -196,9 +196,6 @@ function KnowMyRights() {
   return (
     <div className="rights-page">
 
-      {/* ================= SIDEBAR ================= */}
-      {/* SAME SIDEBAR DESIGN AS EMERGENCY */}
-
       <aside className="sidebar">
 
         <div className="sidebar-logo">
@@ -294,11 +291,8 @@ function KnowMyRights() {
       </aside>
 
 
-      {/* ================= MAIN CONTENT ================= */}
-
       <main className="rights-main">
 
-        {/* HEADER */}
         <header className="rights-header">
 
           <div className="header-left">
@@ -350,9 +344,6 @@ function KnowMyRights() {
 
         </header>
 
-
-        {/* INTRO BANNER */}
-
         <section className="rights-intro">
 
           <div className="intro-icon">
@@ -379,9 +370,6 @@ function KnowMyRights() {
 
         </section>
 
-
-        {/* RIGHTS TITLE */}
-
         <div className="rights-title">
 
           <div>
@@ -405,9 +393,6 @@ function KnowMyRights() {
           </span>
 
         </div>
-
-
-        {/* RIGHTS CARDS */}
 
         <section className="rights-grid">
 
@@ -468,9 +453,6 @@ function KnowMyRights() {
 
         </section>
 
-
-        {/* DISCLAIMER */}
-
         <section className="rights-disclaimer">
 
           <div className="disclaimer-icon">
@@ -495,9 +477,6 @@ function KnowMyRights() {
 
         </section>
 
-
-        {/* FOOTER */}
-
         <footer className="rights-footer">
 
           <span>
@@ -511,9 +490,6 @@ function KnowMyRights() {
         </footer>
 
       </main>
-
-
-      {/* ================= DETAILS POPUP ================= */}
 
       {selectedRight && (
 

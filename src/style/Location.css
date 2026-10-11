@@ -21,10 +21,6 @@ body {
     );
 }
 
-/* =========================
-   SIDEBAR
-========================= */
-
 .sidebar {
   width: 270px;
   min-height: 100vh;
@@ -44,8 +40,6 @@ body {
   bottom: 0;
   box-shadow: 8px 0 30px rgba(59, 36, 23, 0.15);
 }
-
-/* Logo */
 
 .sidebar-logo {
   display: flex;
@@ -134,18 +128,12 @@ body {
   color: #e9c6b6;
 }
 
-/* =========================
-   MAIN CONTENT
-========================= */
-
 .location-main {
   margin-left: 270px;
   width: calc(100% - 270px);
   padding: 42px 48px;
   min-height: 100vh;
 }
-
-/* Header */
 
 .location-header {
   display: flex;
@@ -191,10 +179,6 @@ body {
   font-size: 36px;
   box-shadow: 0 12px 30px rgba(75, 48, 27, 0.08);
 }
-
-/* =========================
-   LOCATION MAIN CARD
-========================= */
 
 .location-card {
   background: linear-gradient(
@@ -259,10 +243,6 @@ body {
   background: #8f6325;
 }
 
-/* =========================
-   SECTION HEADING
-========================= */
-
 .section-heading {
   display: flex;
   justify-content: space-between;
@@ -282,10 +262,6 @@ body {
   color: #887665;
   font-size: 13px;
 }
-
-/* =========================
-   LOCATION GRID
-========================= */
 
 .location-grid {
   display: grid;
@@ -355,10 +331,6 @@ body {
   transform: translateY(-2px);
 }
 
-/* =========================
-   INFORMATION BOX
-========================= */
-
 .location-info {
   margin-top: 30px;
   padding: 20px 24px;
@@ -396,10 +368,6 @@ body {
   line-height: 1.6;
 }
 
-/* =========================
-   DISCLAIMER
-========================= */
-
 .location-disclaimer {
   margin-top: 20px;
   padding: 20px 24px;
@@ -435,10 +403,6 @@ body {
   font-size: 12px;
   line-height: 1.6;
 }
-
-/* =========================
-   RESPONSIVE
-========================= */
 
 @media (max-width: 1200px) {
   .location-grid {

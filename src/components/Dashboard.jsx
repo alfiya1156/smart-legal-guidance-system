@@ -1,9 +1,34 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../style/Dashboard.css";
 
+
 function Dashboard() {
   const navigate = useNavigate();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    navigate("/");
+  };
+
+  const storedUser = localStorage.getItem("user");
+
+  let user = {};
+
+  try {
+    user = storedUser ? JSON.parse(storedUser) : {};
+  } catch (error) {
+    user = {};
+  }
+
+  const userName =
+    user.name ||
+    user.fullName ||
+    user.username ||
+    user.email?.split("@")[0] ||
+    "User";
 
   const quickActions = [
     {
@@ -32,54 +57,79 @@ function Dashboard() {
     },
   ];
 
-  const awarenessItems = [
-    {
-      icon: "📖",
-      title: "Fundamental Rights",
-      text: "Know your constitutional rights",
-    },
-    {
-      icon: "🛡️",
-      title: "Consumer Rights",
-      text: "Be aware. Be protected.",
-    },
-    {
-      icon: "👥",
-      title: "Women & Child Protection",
-      text: "Safety and support for a better future",
-    },
-    {
-      icon: "🔐",
-      title: "Cyber Safety",
-      text: "Stay safe in the digital world",
-    },
-    {
-      icon: "⚖️",
-      title: "Legal Aid",
-      text: "Access to justice for all",
-    },
-  ];
+  const [recentActivities, setRecentActivities] = useState([]);
+  const [activityLoading, setActivityLoading] = useState(true);
+  const [activityError, setActivityError] = useState("");
 
-  const recentActivities = [
-    {
-      icon: "⌂",
-      title: "Property-related issue",
-      text: "Asked about property rights and laws",
-      date: "02 Oct 2026, 10:24 AM",
-    },
-    {
-      icon: "🛒",
-      title: "Consumer complaint",
-      text: "Searched for consumer protection act",
-      date: "01 Oct 2026, 04:15 PM",
-    },
-    {
-      icon: "💼",
-      title: "Workplace issue",
-      text: "Asked about workplace rights",
-      date: "30 Sep 2026, 11:32 AM",
-    },
-  ];
+
+  const [legalLaws, setLegalLaws] = useState([]);
+  const [legalLoading, setLegalLoading] = useState(true);
+  const [legalError, setLegalError] = useState("");
+  const [showAllLaws, setShowAllLaws] = useState(false);
+  const [selectedLaw, setSelectedLaw] = useState(null);
+
+  useEffect(() => {
+    const fetchLegalAwareness = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/legal-awareness"
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.message || "Failed to load legal awareness"
+          );
+        }
+
+        setLegalLaws(Array.isArray(data) ? data : []);
+      } catch (error) {
+        setLegalError(error.message || "Unable to load legal awareness");
+      } finally {
+        setLegalLoading(false);
+      }
+    };
+
+    fetchLegalAwareness();
+  }, []);
+
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      const currentUser = JSON.parse(
+        localStorage.getItem("user") || "{}"
+      );
+
+      const userId = currentUser.id || currentUser.user_id;
+
+      if (!userId) {
+        setActivityError("User ID not found. Please log in again.");
+        setActivityLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/activity/${userId}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to load activities");
+        }
+
+        setRecentActivities(Array.isArray(data) ? data : []);
+      } catch (error) {
+        setActivityError(error.message || "Unable to load activities");
+      } finally {
+        setActivityLoading(false);
+      }
+    };
+
+    fetchActivities();
+  }, []);
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -87,8 +137,6 @@ function Dashboard() {
 
   return (
     <div className="dashboard-page">
-
-      {/* ================= SIDEBAR ================= */}
 
       <aside className="sidebar">
 
@@ -108,8 +156,6 @@ function Dashboard() {
 
         <div className="sidebar-menu">
 
-          {/* Dashboard */}
-
           <button
             className="menu-item active"
             onClick={() => handleNavigation("/dashboard")}
@@ -117,9 +163,6 @@ function Dashboard() {
             <span>🏠</span>
             <span>Dashboard</span>
           </button>
-
-
-          {/* AI Assistant */}
 
           <button
             className="menu-item"
@@ -129,9 +172,6 @@ function Dashboard() {
             <span>AI Assistant</span>
           </button>
 
-
-          {/* Know My Rights */}
-
           <button
             className="menu-item"
             onClick={() => handleNavigation("/know-my-rights")}
@@ -139,9 +179,6 @@ function Dashboard() {
             <span>⚖️</span>
             <span>Know My Rights</span>
           </button>
-
-
-          {/* Emergency */}
 
           <button
             className="menu-item"
@@ -151,9 +188,6 @@ function Dashboard() {
             <span>Emergency Assistance</span>
           </button>
 
-
-          {/* Location */}
-
           <button
             className="menu-item"
             onClick={() => handleNavigation("/location")}
@@ -162,9 +196,6 @@ function Dashboard() {
             <span>Location Tracker</span>
           </button>
 
-
-          {/* Forms */}
-
           <button
             className="menu-item"
             onClick={() => handleNavigation("/forms")}
@@ -172,9 +203,6 @@ function Dashboard() {
             <span>📄</span>
             <span>Forms Generator</span>
           </button>
-
-
-          {/* Scanner */}
 
           <button
             className="menu-item"
@@ -185,9 +213,6 @@ function Dashboard() {
           </button>
 
         </div>
-
-
-        {/* Bottom */}
 
         <div className="sidebar-bottom">
 
@@ -202,7 +227,7 @@ function Dashboard() {
 
           <button
             className="menu-item logout"
-            onClick={() => handleNavigation("/")}
+            onClick={() => setShowLogoutModal(true)}
           >
             <span>↪</span>
             <span>Logout</span>
@@ -212,13 +237,7 @@ function Dashboard() {
 
       </aside>
 
-
-      {/* ================= MAIN CONTENT ================= */}
-
       <main className="dashboard-main">
-
-
-        {/* TOP HEADER */}
 
         <header className="dashboard-header">
 
@@ -229,12 +248,12 @@ function Dashboard() {
           <div className="user-area">
 
             <div className="user-avatar">
-              A
+              {userName.charAt(0).toUpperCase()}
             </div>
 
             <div className="user-info">
               <small>Welcome,</small>
-              <strong>Alfiya</strong>
+              <strong>{userName}</strong>
             </div>
 
             <span className="user-arrow">
@@ -244,9 +263,9 @@ function Dashboard() {
           </div>
 
         </header>
-
-
-        {/* HERO SECTION */}
+        <div className="dashboard-greeting">
+          Welcome, {userName}!
+        </div>
 
         <section className="dashboard-hero">
 
@@ -285,9 +304,6 @@ function Dashboard() {
           </div>
 
         </section>
-
-
-        {/* QUICK ACTIONS */}
 
         <section className="dashboard-section">
 
@@ -341,13 +357,7 @@ function Dashboard() {
 
         </section>
 
-
-        {/* LOWER CONTENT */}
-
         <section className="dashboard-lower">
-
-
-          {/* RECENT ACTIVITY */}
 
           <div className="info-panel">
 
@@ -367,43 +377,35 @@ function Dashboard() {
 
             <div className="activity-list">
 
-              {recentActivities.map((item, index) => (
+              {activityLoading ? (
+                <p>Loading recent activities...</p>
+              ) : activityError ? (
+                <p>{activityError}</p>
+              ) : recentActivities.length === 0 ? (
+                <p>No recent activities yet.</p>
+              ) : (
+                recentActivities.map((item) => (
+                  <div className="activity-item" key={item.id}>
+                    <div className="activity-icon">
+                      {item.activity_type === "AI Assistant" ? "🤖" : "⚖️"}
+                    </div>
 
-                <div
-                  className="activity-item"
-                  key={index}
-                >
+                    <div className="activity-content">
+                      <strong>{item.activity}</strong>
+                      <p>{item.activity_type || "General"}</p>
+                    </div>
 
-                  <div className="activity-icon">
-                    {item.icon}
+                    <small>
+                      {item.created_at
+                        ? new Date(item.created_at).toLocaleString("en-IN")
+                        : ""}
+                    </small>
                   </div>
-
-                  <div className="activity-content">
-
-                    <strong>
-                      {item.title}
-                    </strong>
-
-                    <p>
-                      {item.text}
-                    </p>
-
-                  </div>
-
-                  <small>
-                    {item.date}
-                  </small>
-
-                </div>
-
-              ))}
-
+                ))
+              )}
             </div>
 
           </div>
-
-
-          {/* LEGAL AWARENESS */}
 
           <div className="info-panel awareness-panel">
 
@@ -414,50 +416,56 @@ function Dashboard() {
                 <span></span>
               </div>
 
-            </div>
+              <button
+                type="button"
+                className="view-all"
+                onClick={() => setShowAllLaws(true)}
+              >
+                View All →
+              </button>
 
+            </div>
 
             <div className="awareness-list">
+              {legalLoading ? (
+                <p>Loading legal awareness...</p>
+              ) : legalError ? (
+                <p>{legalError}</p>
+              ) : legalLaws.length === 0 ? (
+                <p>No legal awareness entries available.</p>
+              ) : (
+                legalLaws.slice(0, 5).map((law, index) => (
+                  <div
+                    className="awareness-item"
+                    key={law.id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setSelectedLaw(law)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        setSelectedLaw(law);
+                      }
+                    }}
+                  >
+                    <div className="awareness-icon">
+                      {["⚖️", "📖", "🛡️", "🔐", "📚"][index % 5]}
+                    </div>
 
-              {awarenessItems.map((item, index) => (
+                    <div>
+                      <strong>{law.title}</strong>
+                      <p>{law.category}</p>
+                    </div>
 
-                <div
-                  className="awareness-item"
-                  key={index}
-                >
-
-                  <div className="awareness-icon">
-                    {item.icon}
+                    <span className="awareness-arrow">›</span>
                   </div>
-
-                  <div>
-
-                    <strong>
-                      {item.title}
-                    </strong>
-
-                    <p>
-                      {item.text}
-                    </p>
-
-                  </div>
-
-                  <span className="awareness-arrow">
-                    ›
-                  </span>
-
-                </div>
-
-              ))}
-
+                )
+                )
+              )}
             </div>
-
           </div>
 
         </section>
-
-
-        {/* EMERGENCY BAR */}
 
         <section className="emergency-bar">
 
@@ -490,9 +498,6 @@ function Dashboard() {
 
         </section>
 
-
-        {/* FOOTER */}
-
         <footer className="dashboard-footer">
 
           <span></span>
@@ -506,7 +511,210 @@ function Dashboard() {
 
         </footer>
 
+
       </main>
+
+
+      {selectedLaw && (
+        <div
+          className="legal-detail-overlay"
+          onClick={() => setSelectedLaw(null)}
+        >
+          <div
+            className="legal-detail-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="legal-detail-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="legal-detail-close"
+              onClick={() => setSelectedLaw(null)}
+              aria-label="Close legal details"
+            >
+              ✕
+            </button>
+
+            <span className="legal-detail-category">
+              {selectedLaw.category}
+            </span>
+
+            <h2 id="legal-detail-title">
+              {selectedLaw.title}
+            </h2>
+
+            <p>{selectedLaw.description}</p>
+
+            {selectedLaw.law_explanation && (
+              <section>
+                <h3>⚖️ About This Law</h3>
+                <p>{selectedLaw.law_explanation}</p>
+              </section>
+            )}
+
+            {selectedLaw.applicable_section && (
+              <section>
+                <h3>📖 Applicable Article / Section</h3>
+                <p>{selectedLaw.applicable_section}</p>
+              </section>
+            )}
+
+            {selectedLaw.applies_to && (
+              <section>
+                <h3>👥 Who Does It Apply To?</h3>
+                <p>{selectedLaw.applies_to}</p>
+              </section>
+            )}
+
+            {selectedLaw.exceptions && (
+              <section>
+                <h3>ℹ️ Exceptions / Limitations</h3>
+                <p>{selectedLaw.exceptions}</p>
+              </section>
+            )}
+
+            {selectedLaw.practical_example && (
+              <section>
+                <h3>💡 Practical Example</h3>
+                <p>{selectedLaw.practical_example}</p>
+              </section>
+            )}
+
+            {selectedLaw.help_information && (
+              <section>
+                <h3>📞 Where to Get Help</h3>
+                <p>{selectedLaw.help_information}</p>
+              </section>
+            )}
+
+            <p className="legal-detail-disclaimer">
+              This information is for general legal awareness only
+              and is not a substitute for professional legal advice.
+            </p>
+
+            <button
+              type="button"
+              className="legal-detail-button"
+              onClick={() => setSelectedLaw(null)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+
+      {showAllLaws && (
+        <div
+          className="legal-detail-overlay"
+          onClick={() => setShowAllLaws(false)}
+        >
+          <div
+            className="legal-detail-modal all-laws-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="all-laws-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="legal-detail-close"
+              onClick={() => setShowAllLaws(false)}
+              aria-label="Close all laws"
+            >
+              ✕
+            </button>
+
+            <span className="legal-detail-category">
+              INDIAN LEGAL INFORMATION
+            </span>
+
+            <h2 id="all-laws-title">Legal Awareness</h2>
+
+            <p>Explore the available laws and legal information.</p>
+
+            {legalLoading ? (
+              <p>Loading laws...</p>
+            ) : legalError ? (
+              <p>{legalError}</p>
+            ) : legalLaws.length === 0 ? (
+              <p>No laws available.</p>
+            ) : (
+              <div className="all-laws-list">
+                {legalLaws.map((law) => (
+                  <button
+                    type="button"
+                    className="all-laws-item"
+                    key={law.id}
+                    onClick={() => {
+                      setShowAllLaws(false);
+                      setSelectedLaw(law);
+                    }}
+                  >
+                    <span className="all-laws-icon">⚖️</span>
+
+                    <span className="all-laws-text">
+                      <strong>{law.title}</strong>
+                      <small>{law.category}</small>
+                    </span>
+
+                    <span className="awareness-arrow">›</span>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <button
+              type="button"
+              className="legal-detail-button"
+              onClick={() => setShowAllLaws(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+
+      {showLogoutModal && (
+        <div
+          className="logout-overlay"
+          onClick={() => setShowLogoutModal(false)}
+        >
+          <div
+            className="logout-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="logout-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="logout-icon">⚖</div>
+
+            <h2 id="logout-title">Confirm Logout</h2>
+
+            <p>Are you sure you want to logout?</p>
+
+            <div className="logout-actions">
+              <button
+                type="button"
+                className="logout-cancel-btn"
+                onClick={() => setShowLogoutModal(false)}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="logout-confirm-btn"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

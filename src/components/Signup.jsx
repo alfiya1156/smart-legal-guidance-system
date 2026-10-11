@@ -10,16 +10,25 @@ function Signup() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
+
   const handleSignup = async (e) => {
     e.preventDefault();
 
+    
+    setMessage("");
+    setMessageType("");
+
     if (!name || !email || !password || !confirmPassword) {
-      alert("Please fill all fields");
+      setMessage("Please fill all fields");
+      setMessageType("error");
       return;
     }
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      setMessage("Passwords do not match");
+      setMessageType("error");
       return;
     }
 
@@ -42,14 +51,22 @@ function Signup() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Account created successfully!");
-        navigate("/login");
+        setMessage("Account created successfully!");
+        setMessageType("success");
+
+        // Go to login after short delay
+        setTimeout(() => {
+          navigate("/login");
+        }, 1500);
       } else {
-        alert(data.message || "Signup failed");
+        setMessage(data.message || "Signup failed");
+        setMessageType("error");
       }
     } catch (error) {
       console.error("Signup error:", error);
-      alert("Unable to connect to server");
+
+      setMessage("Unable to connect to server");
+      setMessageType("error");
     }
   };
 
@@ -150,6 +167,18 @@ function Signup() {
             >
               Create Account
             </button>
+
+            {message && (
+              <div
+                className={
+                  messageType === "success"
+                    ? "signup-message success-message"
+                    : "signup-message error-message"
+                }
+              >
+                {message}
+              </div>
+            )}
 
           </form>
 

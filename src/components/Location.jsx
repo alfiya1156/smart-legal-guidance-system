@@ -12,7 +12,6 @@ function Location() {
   return (
     <div className="location-page">
 
-      {/* Sidebar */}
       <aside className="sidebar">
 
         <div className="sidebar-logo">
@@ -106,10 +105,8 @@ function Location() {
 
       </aside>
 
-      {/* Main Content */}
       <main className="location-main">
 
-        {/* Header */}
         <div className="location-header">
 
           <div>
@@ -133,7 +130,6 @@ function Location() {
 
         </div>
 
-        {/* Location Main Card */}
         <div className="location-card">
 
           <div className="location-card-icon">
@@ -159,7 +155,6 @@ function Location() {
 
         </div>
 
-        {/* Services Heading */}
         <div className="section-heading">
 
           <div>
@@ -172,7 +167,6 @@ function Location() {
 
         </div>
 
-        {/* Service Cards */}
         <div className="location-grid">
 
           <div className="location-service-card">
@@ -253,7 +247,6 @@ function Location() {
 
         </div>
 
-        {/* Information Box */}
         <div className="location-info">
 
           <div className="info-icon">
