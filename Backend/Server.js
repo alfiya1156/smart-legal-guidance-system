@@ -1,9 +1,14 @@
+
 const express = require("express");
 const cors = require("cors");
 
 const authRoutes = require("./routes/auth");
 const activityRoutes = require("./routes/activity");
 const legalAwarenessRoutes = require("./routes/legalAwareness");
+const aiAssistantRoutes = require("./routes/aiAssistant");
+const adminRoutes = require("./routes/admin");
+const formsRoutes = require("./routes/forms");
+console.log("FORMS ROUTE FILE LOADED");
 
 const app = express();
 
@@ -17,6 +22,12 @@ app.get("/test-activity", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/activity", activityRoutes);
 app.use("/api/legal-awareness", legalAwarenessRoutes);
+app.use("/api/ai-assistant", aiAssistantRoutes);
+app.use("/api/forms", formsRoutes);
+console.log("FORMS ROUTE REGISTERED");
+
+// Separate administrator authentication
+app.use("/api/admin", adminRoutes);
 
 app.get("/test-legal", (req, res) => {
   res.send("Legal route is working!");

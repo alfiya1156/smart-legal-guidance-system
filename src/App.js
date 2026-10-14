@@ -12,6 +12,9 @@ import Location from "./components/Location";
 import FormGenerator from "./components/FormGenerator";
 import DocumentScanner from "./components/DocumentScanner";
 import Profile from "./components/Profile";
+import AdminDashboard from "./components/AdminDashboard";
+import AdminLogin from "./components/AdminLogin";
+import UserManagement from "./components/UserManagement";
 
 
 function App() {
@@ -29,6 +32,9 @@ function App() {
         <Route path="/forms" element={<FormGenerator />} />
         <Route path="/scanner" element={<DocumentScanner />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />}/>
+        <Route path="/admin-login" element={<AdminLogin />} />
+         <Route path="/admin/users" element={<UserManagement />} />
 
       </Routes>
     </BrowserRouter>

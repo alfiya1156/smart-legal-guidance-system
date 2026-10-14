@@ -92,13 +92,23 @@ function Login() {
           </div>
         </div>
 
-        <button
-          className="nav-back-button"
-          onClick={() => navigate("/")}
-        >
-          ← Back
-        </button>
+        <div className="nav-actions">
 
+          <button
+            className="nav-admin-button"
+            onClick={() => navigate("/admin-login")}
+          >
+           Admin ✪
+          </button>
+
+          <button
+            className="nav-back-button"
+            onClick={() => navigate("/")}
+          >
+            ← Back
+          </button>
+
+        </div>
       </nav>
 
       <main className="login-main">
@@ -175,7 +185,3 @@ function Login() {
 }
 
 export default Login;
-
-
-
-

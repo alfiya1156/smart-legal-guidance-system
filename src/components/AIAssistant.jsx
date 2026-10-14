@@ -13,28 +13,58 @@ function AIAssistant() {
     navigate(path);
   };
 
-  const sendMessage = () => {
-    if (message.trim() === "") return;
+  
+const sendMessage = async () => {
+  if (message.trim() === "") return;
 
-    const newMessage = {
-      type: "user",
-      text: message,
-    };
+  const question = message.trim();
 
-    trackActivity("Legal question submitted", "AI Assistant");
+  const newMessage = {
+    type: "user",
+    text: question,
+  };
 
-    setMessages((prev) => [...prev, newMessage]);
-    setMessage("");
+  trackActivity("Legal question submitted", "AI Assistant");
 
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          type: "ai",
-          text: "Thank you for sharing your legal concern. I will help you understand the relevant legal information and general guidance.",
+  setMessages((prev) => [...prev, newMessage]);
+  setMessage("");
+
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/ai-assistant/ask",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      ]);
-    }, 500);
+        body: JSON.stringify({ question }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Request failed");
+    }
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        type: "ai",
+        text: data.answer,
+      },
+    ]);
+  } catch (error) {
+    console.error("AI Assistant error:", error);
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        type: "ai",
+        text: "Unable to connect to the legal guidance server. Please try again.",
+      },
+    ]);
+  }
   };
 
   const handleKeyDown = (e) => {

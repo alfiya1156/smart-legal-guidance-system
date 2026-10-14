@@ -1,10 +1,40 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../style/KnowMyRights.css";
 
 function KnowMyRights() {
   const navigate = useNavigate();
   const [selectedRight, setSelectedRight] = useState(null);
+
+  
+const [databaseRights, setDatabaseRights] = useState([]);
+const [loadingRights, setLoadingRights] = useState(true);
+const [rightsError, setRightsError] = useState("");
+
+useEffect(() => {
+  const fetchLegalAwareness = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/legal-awareness"
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to load legal awareness");
+      }
+
+      const data = await response.json();
+      setDatabaseRights(data);
+    } catch (error) {
+      console.error("Legal awareness error:", error);
+      setRightsError("Unable to load legal information from database.");
+    } finally {
+      setLoadingRights(false);
+    }
+  };
+
+  fetchLegalAwareness();
+}, []);
+
 
   const rights = [
     {
@@ -188,6 +218,45 @@ function KnowMyRights() {
       ]
     }
   ];
+  
+const displayRights = databaseRights.length > 0
+  ? databaseRights.map((law) => {
+      const existingRight = rights.find(
+        (right) =>
+          right.title.trim().toLowerCase() ===
+          law.title.trim().toLowerCase()
+      );
+
+      return {
+        icon: existingRight?.icon || "⚖️",
+        title: law.title,
+        article:
+          existingRight?.article ||
+          law.applicable_section ||
+          law.category,
+        category: law.category || existingRight?.category,
+        description:
+          existingRight?.description || law.description,
+        details:
+          existingRight?.details ||
+          law.law_explanation ||
+          law.description,
+        points:
+          existingRight?.points?.length > 0
+            ? existingRight.points
+            : [
+                law.applies_to &&
+                  `Applies to: ${law.applies_to}`,
+                law.exceptions &&
+                  `Exceptions: ${law.exceptions}`,
+                law.practical_example &&
+                  `Example: ${law.practical_example}`,
+                law.help_information &&
+                  `Help: ${law.help_information}`,
+              ].filter(Boolean),
+      };
+    })
+  : rights;
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -389,14 +458,14 @@ function KnowMyRights() {
           </div>
 
           <span className="rights-total">
-            ⚖ {rights.length} Categories
+             ⚖ {displayRights.length} Categories
           </span>
 
         </div>
 
         <section className="rights-grid">
 
-          {rights.map((right, index) => (
+            {displayRights.map((right, index) => (
 
             <article
               className="right-card"

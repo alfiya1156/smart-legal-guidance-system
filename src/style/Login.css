@@ -105,6 +105,40 @@
     transform: translateX(-2px);
 }
 
+/* Navbar buttons container */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Admin button */
+.nav-admin-button {
+    padding: 10px 22px;
+
+    border: 1px solid rgba(255, 255, 255, 0.45);
+
+    border-radius: 25px;
+
+    background: rgba(184, 134, 11, 0.85);
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.nav-admin-button:hover {
+    background: #d4a017;
+
+    transform: translateX(-2px);
+}
+
 .login-main {
     width: 100%;
     height: 100vh;
