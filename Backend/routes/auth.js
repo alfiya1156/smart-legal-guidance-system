@@ -1,5 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 const db = require("../db");
@@ -142,9 +143,16 @@ router.post("/login", (req, res) => {
             );
           }
 
+          const token = jwt.sign(
+            { id: user.id, name: user.name, email: user.email, role: "user" },
+            process.env.JWT_SECRET || "smart-legal-guidance-system-secret-key-2026",
+            { expiresIn: "7d" }
+          );
+
           // Login response 
           return res.status(200).json({
             message: "Login successful",
+            token,
             user: {
               id: user.id,
               name: user.name,
@@ -162,6 +170,121 @@ router.post("/login", (req, res) => {
       });
     }
   });
+});
+
+// ================================
+// GET USER PROFILE & LIVE STATS
+// ================================
+router.get("/profile/:id", (req, res) => {
+  const userId = Number(req.params.id);
+
+  if (!Number.isInteger(userId) || userId <= 0) {
+    return res.status(400).json({ message: "Invalid user ID" });
+  }
+
+  const userSql = "SELECT id, name, email, created_at FROM users WHERE id = ? LIMIT 1";
+
+  db.query(userSql, [userId], (err, users) => {
+    if (err) {
+      console.error("Fetch profile error:", err.message);
+      return res.status(500).json({ message: "Database error fetching profile" });
+    }
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const userData = users[0];
+
+    // Compute real statistics from actual MySQL tables
+    const statsSql = `
+      SELECT
+        (SELECT COUNT(*) FROM legal_form_submissions WHERE user_id = ?) AS formsCount,
+        (SELECT COUNT(*) FROM recent_activity WHERE user_id = ?) AS totalActivities,
+        (SELECT COUNT(*) FROM recent_activity WHERE user_id = ? AND activity_type = 'AI Assistant') AS aiQuestionsCount,
+        (SELECT COUNT(*) FROM recent_activity WHERE user_id = ? AND activity_type = 'Forms Generator') AS formsGeneratedCount
+    `;
+
+    db.query(statsSql, [userId, userId, userId, userId], (statsErr, statsRows) => {
+      const stats = (statsRows && statsRows[0]) || {
+        formsCount: 0,
+        totalActivities: 0,
+        aiQuestionsCount: 0,
+        formsGeneratedCount: 0,
+      };
+
+      res.json({
+        user: userData,
+        stats: {
+          rightsViewed: Math.max(1, stats.totalActivities),
+          formsGenerated: stats.formsCount || stats.formsGeneratedCount || 0,
+          aiConsultations: stats.aiQuestionsCount || 0,
+          recentActivitiesCount: stats.totalActivities || 0,
+        },
+      });
+    });
+  });
+});
+
+// ================================
+// UPDATE USER PROFILE
+// ================================
+router.put("/profile/:id", async (req, res) => {
+  const userId = Number(req.params.id);
+  const { name, email, password } = req.body;
+
+  if (!Number.isInteger(userId) || userId <= 0) {
+    return res.status(400).json({ message: "Invalid user ID" });
+  }
+
+  if (!name || !email) {
+    return res.status(400).json({ message: "Name and email are required" });
+  }
+
+  try {
+    // Check if new email is taken by another user
+    const emailCheckSql = "SELECT id FROM users WHERE email = ? AND id != ?";
+    db.query(emailCheckSql, [email.trim(), userId], async (emailErr, duplicate) => {
+      if (emailErr) {
+        console.error("Email check error:", emailErr.message);
+        return res.status(500).json({ message: "Database check error" });
+      }
+
+      if (duplicate && duplicate.length > 0) {
+        return res.status(409).json({ message: "Email is already taken by another account" });
+      }
+
+      if (password && password.trim().length >= 6) {
+        const hashedPassword = await bcrypt.hash(password.trim(), 10);
+        const updateSql = "UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?";
+        db.query(updateSql, [name.trim(), email.trim(), hashedPassword, userId], (err) => {
+          if (err) {
+            console.error("Update profile error:", err.message);
+            return res.status(500).json({ message: "Failed to update profile" });
+          }
+          return res.json({
+            message: "Profile updated successfully",
+            user: { id: userId, name: name.trim(), email: email.trim() },
+          });
+        });
+      } else {
+        const updateSql = "UPDATE users SET name = ?, email = ? WHERE id = ?";
+        db.query(updateSql, [name.trim(), email.trim(), userId], (err) => {
+          if (err) {
+            console.error("Update profile error:", err.message);
+            return res.status(500).json({ message: "Failed to update profile" });
+          }
+          return res.json({
+            message: "Profile updated successfully",
+            user: { id: userId, name: name.trim(), email: email.trim() },
+          });
+        });
+      }
+    });
+  } catch (error) {
+    console.error("Profile update error:", error);
+    res.status(500).json({ message: "Server error updating profile" });
+  }
 });
 
 console.log("AUTH ROUTES LOADED");

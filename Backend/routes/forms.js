@@ -128,14 +128,30 @@ router.post("/generate", async (req, res) => {
       draft,
     ];
 
-    const [result] = await db.execute(sql, values);
+    db.query(sql, values, (err, result) => {
+      if (err) {
+        console.error("Form generation database error:", err.message);
+        return res.status(500).json({
+          success: false,
+          message: "Unable to save the form draft to database.",
+        });
+      }
 
-    return res.status(201).json({
-      success: true,
-      message: "Legal form draft generated and saved successfully.",
-      formId: result.insertId,
-      formTitle,
-      draft,
+      // Also log this in recent_activity if userId is provided
+      if (values[0]) {
+        const actSql = `INSERT INTO recent_activity (user_id, activity, activity_type) VALUES (?, ?, 'Forms Generator')`;
+        db.query(actSql, [values[0], `Generated ${formTitle} draft`], (actErr) => {
+          if (actErr) console.warn("Activity log failed for form:", actErr.message);
+        });
+      }
+
+      return res.status(201).json({
+        success: true,
+        message: "Legal form draft generated and saved successfully.",
+        formId: result.insertId,
+        formTitle,
+        draft,
+      });
     });
   } catch (error) {
     console.error("Form generation error:", error.message);
@@ -147,27 +163,34 @@ router.post("/generate", async (req, res) => {
   }
 });
 
-router.get("/submission/:id", async (req, res) => {
-  try {
-    const id = Number(req.params.id);
+router.get("/submission/:id", (req, res) => {
+  const id = Number(req.params.id);
 
-    if (!Number.isInteger(id) || id <= 0) {
-      return res.status(400).json({
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid form ID.",
+    });
+  }
+
+  const sql = `
+    SELECT id, form_type, applicant_name, email, phone, subject,
+           incident_date, description, generated_draft, status, created_at
+    FROM legal_form_submissions
+    WHERE id = ?
+    LIMIT 1
+  `;
+
+  db.query(sql, [id], (err, rows) => {
+    if (err) {
+      console.error("Fetch form error:", err.message);
+      return res.status(500).json({
         success: false,
-        message: "Invalid form ID.",
+        message: "Unable to retrieve the form.",
       });
     }
 
-    const [rows] = await db.execute(
-      `SELECT id, form_type, applicant_name, subject,
-              generated_draft, status, created_at
-       FROM legal_form_submissions
-       WHERE id = ?
-       LIMIT 1`,
-      [id]
-    );
-
-    if (!rows.length) {
+    if (!rows || rows.length === 0) {
       return res.status(404).json({
         success: false,
         message: "Form not found.",
@@ -175,14 +198,38 @@ router.get("/submission/:id", async (req, res) => {
     }
 
     res.json({ success: true, form: rows[0] });
-  } catch (error) {
-    console.error("Fetch form error:", error.message);
+  });
+});
 
-    res.status(500).json({
+router.get("/user/:userId", (req, res) => {
+  const userId = Number(req.params.userId);
+
+  if (!Number.isInteger(userId) || userId <= 0) {
+    return res.status(400).json({
       success: false,
-      message: "Unable to retrieve the form.",
+      message: "Invalid user ID.",
     });
   }
+
+  const sql = `
+    SELECT id, form_type, applicant_name, subject, status, created_at
+    FROM legal_form_submissions
+    WHERE user_id = ?
+    ORDER BY created_at DESC
+    LIMIT 20
+  `;
+
+  db.query(sql, [userId], (err, rows) => {
+    if (err) {
+      console.error("Fetch user forms error:", err.message);
+      return res.status(500).json({
+        success: false,
+        message: "Unable to retrieve user forms.",
+      });
+    }
+
+    res.json({ success: true, forms: rows || [] });
+  });
 });
 
 router.get("/test", (req, res) => {

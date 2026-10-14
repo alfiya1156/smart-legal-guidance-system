@@ -5,35 +5,45 @@ import "../style/KnowMyRights.css";
 function KnowMyRights() {
   const navigate = useNavigate();
   const [selectedRight, setSelectedRight] = useState(null);
+  const [databaseRights, setDatabaseRights] = useState([]);
+  const [loadingRights, setLoadingRights] = useState(true);
+  const [rightsError, setRightsError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
-  
-const [databaseRights, setDatabaseRights] = useState([]);
-const [loadingRights, setLoadingRights] = useState(true);
-const [rightsError, setRightsError] = useState("");
+  const storedUser = localStorage.getItem("user");
+  let currentUser = {};
+  try {
+    currentUser = storedUser ? JSON.parse(storedUser) : {};
+  } catch {
+    currentUser = {};
+  }
+  const userName = currentUser.name || currentUser.email?.split("@")[0] || "Citizen";
+  const userInitial = userName.charAt(0).toUpperCase();
 
-useEffect(() => {
-  const fetchLegalAwareness = async () => {
-    try {
-      const response = await fetch(
-        "http://localhost:5000/api/legal-awareness"
-      );
+  useEffect(() => {
+    const fetchLegalAwareness = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/legal-awareness"
+        );
 
-      if (!response.ok) {
-        throw new Error("Failed to load legal awareness");
+        if (!response.ok) {
+          throw new Error("Failed to load legal awareness");
+        }
+
+        const data = await response.json();
+        setDatabaseRights(data);
+      } catch (error) {
+        console.error("Legal awareness error:", error);
+        setRightsError("Unable to load legal information from database.");
+      } finally {
+        setLoadingRights(false);
       }
+    };
 
-      const data = await response.json();
-      setDatabaseRights(data);
-    } catch (error) {
-      console.error("Legal awareness error:", error);
-      setRightsError("Unable to load legal information from database.");
-    } finally {
-      setLoadingRights(false);
-    }
-  };
-
-  fetchLegalAwareness();
-}, []);
+    fetchLegalAwareness();
+  }, []);
 
 
   const rights = [
@@ -258,6 +268,24 @@ const displayRights = databaseRights.length > 0
     })
   : rights;
 
+  const categories = ["All", ...Array.from(new Set(displayRights.map(r => r.category).filter(Boolean)))];
+
+  const filteredRights = displayRights.filter((right) => {
+    const term = searchTerm.trim().toLowerCase();
+    const matchesSearch =
+      !term ||
+      (right.title && right.title.toLowerCase().includes(term)) ||
+      (right.description && right.description.toLowerCase().includes(term)) ||
+      (right.article && right.article.toLowerCase().includes(term)) ||
+      (right.details && right.details.toLowerCase().includes(term)) ||
+      (right.category && right.category.toLowerCase().includes(term));
+
+    const matchesCategory =
+      selectedCategory === "All" || right.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+  });
+
   const handleNavigation = (path) => {
     navigate(path);
   };
@@ -396,15 +424,15 @@ const displayRights = databaseRights.length > 0
               🔔
             </button>
 
-            <div className="profile">
+            <div className="profile" onClick={() => handleNavigation("/profile")} style={{ cursor: "pointer" }}>
 
               <div className="profile-circle">
-                A
+                {userInitial}
               </div>
 
               <div>
-                <strong>Alfiya</strong>
-                <small>User</small>
+                <strong>{userName}</strong>
+                <small>{currentUser.role === "admin" ? "Administrator" : "Citizen"}</small>
               </div>
 
             </div>
@@ -439,6 +467,71 @@ const displayRights = databaseRights.length > 0
 
         </section>
 
+        {/* Search & Category Filter */}
+        <section style={{ margin: "1.5rem 0", background: "#fcfbf7", border: "1px solid #e7ded4", borderRadius: "12px", padding: "1.2rem" }}>
+          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "center", marginBottom: "1rem" }}>
+            <div style={{ flex: 1, minWidth: "260px" }}>
+              <input
+                type="text"
+                placeholder="🔍 Search rights, articles, IPC/BNS, keywords..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "0.75rem 1rem",
+                  borderRadius: "8px",
+                  border: "1px solid #c5a059",
+                  background: "#fff",
+                  color: "#2c1810",
+                  fontSize: "0.95rem",
+                  outline: "none",
+                  boxSizing: "border-box"
+                }}
+              />
+            </div>
+            {searchTerm && (
+              <button
+                type="button"
+                onClick={() => setSearchTerm("")}
+                style={{
+                  padding: "0.75rem 1rem",
+                  borderRadius: "8px",
+                  border: "1px solid #d4c5b9",
+                  background: "#fff",
+                  color: "#6b584c",
+                  cursor: "pointer",
+                  fontSize: "0.9rem"
+                }}
+              >
+                Clear Search
+              </button>
+            )}
+          </div>
+
+          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setSelectedCategory(cat)}
+                style={{
+                  padding: "0.45rem 0.9rem",
+                  borderRadius: "20px",
+                  border: selectedCategory === cat ? "1px solid #8c6d37" : "1px solid #d4c5b9",
+                  background: selectedCategory === cat ? "#8c6d37" : "#fff",
+                  color: selectedCategory === cat ? "#fff" : "#3b2219",
+                  fontSize: "0.85rem",
+                  cursor: "pointer",
+                  fontWeight: selectedCategory === cat ? "600" : "normal",
+                  transition: "all 0.2s"
+                }}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </section>
+
         <div className="rights-title">
 
           <div>
@@ -458,14 +551,48 @@ const displayRights = databaseRights.length > 0
           </div>
 
           <span className="rights-total">
-             ⚖ {displayRights.length} Categories
+             ⚖ {filteredRights.length} Found
           </span>
 
         </div>
 
+        {loadingRights && (
+          <div style={{ textAlign: "center", padding: "1rem", color: "#8c6d37", fontStyle: "italic" }}>
+            ⚖ Synchronizing legal rights from database...
+          </div>
+        )}
+
+        {rightsError && (
+          <div style={{ textAlign: "center", padding: "0.5rem", color: "#b3261e", fontSize: "0.88rem" }}>
+            ⚠️ {rightsError} (Displaying foundational constitutional rights)
+          </div>
+        )}
+
         <section className="rights-grid">
 
-            {displayRights.map((right, index) => (
+            {filteredRights.length === 0 ? (
+              <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "3rem", background: "#fcfbf7", borderRadius: "12px", border: "1px dashed #c5a059" }}>
+                <p style={{ fontSize: "1.2rem", color: "#6b584c", margin: "0 0 0.5rem" }}>
+                  No legal rights found matching "{searchTerm}" {selectedCategory !== "All" ? `in category "${selectedCategory}"` : ""}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => { setSearchTerm(""); setSelectedCategory("All"); }}
+                  style={{
+                    padding: "0.6rem 1.2rem",
+                    borderRadius: "6px",
+                    border: "1px solid #8c6d37",
+                    background: "#8c6d37",
+                    color: "#fff",
+                    cursor: "pointer",
+                    fontSize: "0.9rem"
+                  }}
+                >
+                  Reset Filters
+                </button>
+              </div>
+            ) : (
+              filteredRights.map((right, index) => (
 
             <article
               className="right-card"
@@ -518,7 +645,7 @@ const displayRights = databaseRights.length > 0
 
             </article>
 
-          ))}
+          )))}
 
         </section>
 

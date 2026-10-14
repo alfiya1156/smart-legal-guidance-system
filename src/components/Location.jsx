@@ -6,21 +6,19 @@ import "../style/Location.css";
 const SERVICE_TYPES = {
   "police stations": {
     title: "Police Stations",
-    query: '"amenity"="police"',
   },
   courts: {
     title: "Courts",
-    query: '"amenity"="courthouse"',
   },
   "legal aid centres": {
     title: "Legal Aid Centres",
-    query: '"office"="ngo"',
   },
   "government offices": {
     title: "Government Offices",
-    query: '"office"="government"',
   },
 };
+
+const SEARCH_RADIUS = 10000;
 
 const getDistanceKm = (lat1, lon1, lat2, lon2) => {
   const toRadians = (degrees) => (degrees * Math.PI) / 180;
@@ -46,6 +44,7 @@ function Location() {
   const navigate = useNavigate();
 
   const [coordinates, setCoordinates] = useState(null);
+  const [accuracy, setAccuracy] = useState(null);
   const [locationStatus, setLocationStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
@@ -57,6 +56,7 @@ function Location() {
     navigate(path);
   };
 
+  // Detect the location supplied by the device/browser.
   const detectLocation = () => {
     if (!navigator.geolocation) {
       setLocationStatus(
@@ -67,31 +67,50 @@ function Location() {
 
     setLoading(true);
     setLocationStatus("Detecting your current location...");
+    setNearbyPlaces([]);
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const latitude = position.coords.latitude;
         const longitude = position.coords.longitude;
+        const accuracyMeters = position.coords.accuracy;
 
         setCoordinates({ latitude, longitude });
-        setNearbyPlaces([]);
-        setLocationStatus(
-          "Your current location was detected successfully. Select a service to find nearby places."
-        );
+        setAccuracy(accuracyMeters);
+
+        if (accuracyMeters > 1000) {
+          setLocationStatus(
+            `Location detected, but accuracy is approximately ${(
+              accuracyMeters / 1000
+            ).toFixed(1)} km. Check your device location settings for better accuracy.`
+          );
+        } else {
+          setLocationStatus(
+            `Location detected. Estimated accuracy: ${Math.round(
+              accuracyMeters
+            )} metres.`
+          );
+        }
+
+        console.log("Latitude:", latitude);
+        console.log("Longitude:", longitude);
+        console.log("Accuracy in metres:", accuracyMeters);
+
         setLoading(false);
       },
       (error) => {
-        let message = "Unable to detect your location.";
+        let message =
+          "Unable to detect your current location.";
 
         if (error.code === 1) {
           message =
-            "Location permission denied. Allow location access in your browser settings and try again.";
+            "Location permission denied. Allow location access in Chrome settings and try again.";
         } else if (error.code === 2) {
           message =
-            "Your location is unavailable. Check your device location settings.";
+            "Location unavailable. Enable Windows Location Services and check your device settings.";
         } else if (error.code === 3) {
           message =
-            "Location request timed out. Please try again.";
+            "Location request timed out. Check your connection and try again.";
         }
 
         setLocationStatus(message);
@@ -99,12 +118,13 @@ function Location() {
       },
       {
         enableHighAccuracy: true,
-        timeout: 20000,
+        timeout: 30000,
         maximumAge: 0,
       }
     );
   };
 
+  // Search mapped services within 10 km.
   const searchService = async (service) => {
     if (!coordinates) {
       setLocationStatus(
@@ -124,84 +144,112 @@ function Location() {
 
     const tagQuery = {
       "police stations": `
-        nwr(around:25000,${latitude},${longitude})["amenity"="police"];
+        nwr(around:${SEARCH_RADIUS},${latitude},${longitude})
+        ["amenity"="police"];
       `,
       courts: `
-        nwr(around:25000,${latitude},${longitude})["amenity"="courthouse"];
+        nwr(around:${SEARCH_RADIUS},${latitude},${longitude})
+        ["amenity"="courthouse"];
       `,
       "legal aid centres": `
-        nwr(around:25000,${latitude},${longitude})["office"="lawyer"];
-        nwr(around:25000,${latitude},${longitude})["amenity"="community_centre"]["name"];
+        nwr(around:${SEARCH_RADIUS},${latitude},${longitude})
+        ["office"="lawyer"];
+        nwr(around:${SEARCH_RADIUS},${latitude},${longitude})
+        ["amenity"="community_centre"]["name"];
       `,
       "government offices": `
-        nwr(around:25000,${latitude},${longitude})["office"="government"];
+        nwr(around:${SEARCH_RADIUS},${latitude},${longitude})
+        ["office"="government"];
       `,
     };
 
     const query = `
-      [out:json][timeout:25];
+      [out:json][timeout:30];
       (
         ${tagQuery[service]}
       );
       out center tags;
     `;
 
-    try {
-      const response = await fetch(
-        "https://overpass-api.de/api/interpreter",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-          },
-          body: `data=${encodeURIComponent(query)}`,
-        }
-      );
+    // Try a backup endpoint if the first map server is unavailable.
+    const endpoints = [
+      "https://overpass-api.de/api/interpreter",
+      "https://overpass.kumi.systems/api/interpreter",
+    ];
 
-      if (!response.ok) {
-        throw new Error(
-          "The map service is temporarily unavailable."
-        );
+    try {
+      let data = null;
+      let lastError = null;
+
+      for (const endpoint of endpoints) {
+        try {
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/x-www-form-urlencoded;charset=UTF-8",
+            },
+            body: `data=${encodeURIComponent(query)}`,
+          });
+
+          if (!response.ok) {
+            throw new Error("Map server unavailable");
+          }
+
+          data = await response.json();
+          break;
+        } catch (error) {
+          lastError = error;
+        }
       }
 
-      const data = await response.json();
+      if (!data) {
+        throw lastError || new Error("Search failed");
+      }
 
       const places = (data.elements || [])
         .map((place) => {
-          const latitudeValue =
-            place.lat ?? place.center?.lat;
-          const longitudeValue =
-            place.lon ?? place.center?.lon;
+          const placeLat = place.lat ?? place.center?.lat;
+          const placeLon = place.lon ?? place.center?.lon;
 
           if (
-            typeof latitudeValue !== "number" ||
-            typeof longitudeValue !== "number"
+            typeof placeLat !== "number" ||
+            typeof placeLon !== "number"
           ) {
             return null;
           }
 
           const tags = place.tags || {};
 
+          const distance = getDistanceKm(
+            latitude,
+            longitude,
+            placeLat,
+            placeLon
+          );
+
+          if (distance > SEARCH_RADIUS / 1000) {
+            return null;
+          }
+
           return {
             id: `${place.type}-${place.id}`,
             name:
               tags.name ||
               tags["name:en"] ||
-              SERVICE_TYPES[service].title.slice(0, -1),
+              SERVICE_TYPES[service].title,
             address: [
               tags["addr:street"],
-              tags["addr:city"] || tags["addr:suburb"],
+              tags["addr:suburb"],
+              tags["addr:city"] ||
+                tags["addr:district"],
             ]
               .filter(Boolean)
-              .join(", ") || "Address not available in map data",
-            latitude: latitudeValue,
-            longitude: longitudeValue,
-            distance: getDistanceKm(
-              latitude,
-              longitude,
-              latitudeValue,
-              longitudeValue
-            ),
+              .join(", ") ||
+              "Address not available in map data",
+            latitude: placeLat,
+            longitude: placeLon,
+            distance,
           };
         })
         .filter(Boolean)
@@ -211,30 +259,28 @@ function Location() {
 
       if (places.length > 0) {
         setLocationStatus(
-          `Found ${places.length} nearby result(s). Places are sorted by straight-line distance.`
+          `Found ${places.length} place(s) within 10 km, sorted by straight-line distance.`
         );
       } else {
         setLocationStatus(
-          "No matching places were found within 10 km in the available map data. Try Google Maps for more results."
+          "No matching places found within 10 km in the available map data. Try Google Maps for additional results."
         );
       }
     } catch (error) {
+      console.error("Nearby search error:", error);
+
       setLocationStatus(
-        "Unable to load nearby places right now. Please try again or use Google Maps."
+        "Unable to load nearby places. Please try again in a moment or use Google Maps."
       );
     } finally {
       setSearching(false);
     }
   };
 
-  const mapQuery = coordinates
-    ? `${SERVICE_TYPES[selectedService].title} near ${coordinates.latitude},${coordinates.longitude}`
-    : "legal aid centres in Tamil Nadu";
-
-  const mapUrl =
-    "https://maps.google.com/maps?q=" +
-    encodeURIComponent(mapQuery) +
-    "&z=13&output=embed";
+  // Centre the embedded map on the detected coordinates.
+  const mapUrl = coordinates
+    ? `https://maps.google.com/maps?q=${coordinates.latitude},${coordinates.longitude}&z=15&output=embed`
+    : "https://maps.google.com/maps?q=Kallakurichi%2C%20Tamil%20Nadu&z=13&output=embed";
 
   const openGoogleMaps = () => {
     if (!coordinates) {
@@ -390,7 +436,8 @@ function Location() {
             {locationStatus && (
               <p
                 className={
-                  coordinates
+                  coordinates && accuracy !== null &&
+                  accuracy <= 1000
                     ? "location-status success"
                     : "location-status"
                 }
@@ -413,6 +460,13 @@ function Location() {
                 <strong>
                   {coordinates.longitude.toFixed(6)}
                 </strong>
+
+                <span>🎯 Accuracy</span>
+                <strong>
+                  {accuracy !== null
+                    ? `${Math.round(accuracy)} metres`
+                    : "Unavailable"}
+                </strong>
               </div>
             )}
           </div>
@@ -422,8 +476,8 @@ function Location() {
           <div>
             <h2>Nearby Legal Services</h2>
             <p>
-              Select a service to find nearby places and their
-              distances from your location.
+              Select a service to find nearby places and
+              their distances from your location.
             </p>
           </div>
         </div>
@@ -478,8 +532,8 @@ function Location() {
             <div className="service-icon">🏢</div>
             <h3>Government Offices</h3>
             <p>
-              Find nearby government offices listed in the
-              available map data.
+              Find nearby government offices listed in
+              the available map data.
             </p>
             <button
               onClick={() => searchService("government offices")}
@@ -498,8 +552,8 @@ function Location() {
                   📍 {SERVICE_TYPES[selectedService].title}
                 </h2>
                 <p>
-                  Places within 10 km, sorted by straight-line
-                  distance.
+                  Places within 10 km, sorted by
+                  straight-line distance.
                 </p>
               </div>
 
@@ -560,7 +614,7 @@ function Location() {
 
           <p>
             {coordinates
-              ? `Map search: ${SERVICE_TYPES[selectedService].title}`
+              ? "Map centred on your detected coordinates."
               : "Detect your location to explore services near you."}
           </p>
 
@@ -580,8 +634,8 @@ function Location() {
           />
 
           <p className="map-attribution">
-            Map search provided by Google Maps. Nearby place
-            results use OpenStreetMap data.
+            Map provided by Google Maps. Nearby place results
+            use OpenStreetMap data.
           </p>
         </div>
 

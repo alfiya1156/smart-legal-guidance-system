@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../style/AdminDashboard.css";
 
@@ -7,6 +7,13 @@ function AdminDashboard() {
   const location = useLocation();
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [stats, setStats] = useState({
+    usersCount: 0,
+    awarenessCount: 0,
+    knowledgeCount: 0,
+    submissionsCount: 0,
+    activitiesCount: 0,
+  });
 
   const getAdminDetails = () => {
     try {
@@ -23,6 +30,26 @@ function AdminDashboard() {
   const admin = getAdminDetails();
   const adminName = admin.name || admin.username || "Admin";
   const adminEmail = admin.email || "Administrator";
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const token = localStorage.getItem("adminToken") || localStorage.getItem("token");
+        const res = await fetch("http://localhost:5000/api/admin/stats", {
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
+        const data = await res.json();
+        if (res.ok && data.stats) {
+          setStats(data.stats);
+        }
+      } catch (err) {
+        console.warn("Could not load admin stats:", err.message);
+      }
+    };
+    fetchStats();
+  }, []);
 
   const menuItems = [
     {
@@ -190,7 +217,7 @@ function AdminDashboard() {
 
               <div className="admin-card-details">
                 <h3>User Management</h3>
-                <p>View and manage registered users</p>
+                <p>{stats.usersCount} Registered Citizens</p>
               </div>
 
               <span className="admin-card-arrow">→</span>
@@ -209,7 +236,7 @@ function AdminDashboard() {
 
               <div className="admin-card-details">
                 <h3>Legal Awareness</h3>
-                <p>Manage legal awareness information</p>
+                <p>{stats.awarenessCount} Awareness Laws</p>
               </div>
 
               <span className="admin-card-arrow">→</span>
@@ -228,7 +255,7 @@ function AdminDashboard() {
 
               <div className="admin-card-details">
                 <h3>AI Legal Knowledge</h3>
-                <p>Manage legal knowledge resources</p>
+                <p>{stats.knowledgeCount} Legal Citations</p>
               </div>
 
               <span className="admin-card-arrow">→</span>
@@ -247,7 +274,7 @@ function AdminDashboard() {
 
               <div className="admin-card-details">
                 <h3>Recent Activity</h3>
-                <p>Review system activity records</p>
+                <p>{stats.activitiesCount} Recorded Actions</p>
               </div>
 
               <span className="admin-card-arrow">→</span>

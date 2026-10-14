@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { trackActivity } from "../utils/activityTracker";
 import "../style/AIAssistant.css";
@@ -8,63 +8,181 @@ function AIAssistant() {
 
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  const [language, setLanguage] = useState("English");
+  const [loading, setLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [speakingIndex, setSpeakingIndex] = useState(null);
+  const recognitionRef = useRef(null);
+
+  const storedUser = localStorage.getItem("user");
+  let currentUser = {};
+  try {
+    currentUser = storedUser ? JSON.parse(storedUser) : {};
+  } catch {
+    currentUser = {};
+  }
+  const userName = currentUser.name || currentUser.email?.split("@")[0] || "Citizen";
+  const userInitial = userName.charAt(0).toUpperCase();
 
   const handleNavigation = (path) => {
     navigate(path);
   };
 
-  
-const sendMessage = async () => {
-  if (message.trim() === "") return;
+  // Initialize Speech Recognition
+  useEffect(() => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
 
-  const question = message.trim();
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = language === "Tamil" ? "ta-IN" : "en-IN";
 
-  const newMessage = {
-    type: "user",
-    text: question,
-  };
+      recognition.onstart = () => {
+        setIsListening(true);
+      };
 
-  trackActivity("Legal question submitted", "AI Assistant");
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setMessage(transcript);
+        setIsListening(false);
+      };
 
-  setMessages((prev) => [...prev, newMessage]);
-  setMessage("");
+      recognition.onerror = (event) => {
+        console.warn("Speech recognition error:", event.error);
+        setIsListening(false);
+      };
 
-  try {
-    const response = await fetch(
-      "http://localhost:5000/api/ai-assistant/ask",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ question }),
-      }
-    );
+      recognition.onend = () => {
+        setIsListening(false);
+      };
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "Request failed");
+      recognitionRef.current = recognition;
     }
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        type: "ai",
-        text: data.answer,
-      },
-    ]);
-  } catch (error) {
-    console.error("AI Assistant error:", error);
+    return () => {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [language]);
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        type: "ai",
-        text: "Unable to connect to the legal guidance server. Please try again.",
-      },
-    ]);
-  }
+  const toggleListening = () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert(
+        "Voice input is not supported in this browser. Please try Google Chrome or Microsoft Edge."
+      );
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+    } else {
+      try {
+        if (recognitionRef.current) {
+          recognitionRef.current.lang = language === "Tamil" ? "ta-IN" : "en-IN";
+          recognitionRef.current.start();
+        }
+      } catch (err) {
+        console.warn("Speech recognition start failed:", err.message);
+        setIsListening(false);
+      }
+    }
+  };
+
+  const handleSpeak = (text, index) => {
+    if (!window.speechSynthesis) {
+      alert("Text-to-speech is not supported in this browser.");
+      return;
+    }
+
+    if (speakingIndex === index) {
+      window.speechSynthesis.cancel();
+      setSpeakingIndex(null);
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+
+    // Clean markdown/separators from text for smooth speech
+    const cleanSpeechText = text
+      .replace(/---+/g, "")
+      .replace(/[*_#`]/g, "")
+      .trim();
+
+    const utterance = new SpeechSynthesisUtterance(cleanSpeechText);
+    utterance.lang = language === "Tamil" ? "ta-IN" : "en-IN";
+    utterance.rate = 0.95;
+
+    utterance.onend = () => setSpeakingIndex(null);
+    utterance.onerror = () => setSpeakingIndex(null);
+
+    setSpeakingIndex(index);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const sendMessage = async (overrideText) => {
+    const textToSend = typeof overrideText === "string" ? overrideText : message;
+    if (!textToSend.trim() || loading) return;
+
+    const question = textToSend.trim();
+    const newMessage = {
+      type: "user",
+      text: question,
+    };
+
+    trackActivity("Legal question submitted", "AI Assistant");
+
+    setMessages((prev) => [...prev, newMessage]);
+    setMessage("");
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/ai-assistant/ask",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ question, language }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Request failed");
+      }
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "ai",
+          text: data.answer,
+        },
+      ]);
+    } catch (error) {
+      console.error("AI Assistant error:", error);
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "ai",
+          text:
+            language === "Tamil"
+              ? "சட்ட வழிகாட்டல் சேவையகத்துடன் இணைக்க முடியவில்லை. சிறிது நேரம் கழித்து மீண்டும் முயற்சிக்கவும்."
+              : "Unable to connect to the legal guidance server. Please try again.",
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleKeyDown = (e) => {
@@ -231,28 +349,28 @@ const sendMessage = async () => {
 
           <div className="header-right">
 
-            <select className="language-select">
-              <option>English</option>
-              <option>Tamil</option>
+            <select
+              className="language-select"
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+            >
+              <option value="English">English</option>
+              <option value="Tamil">Tamil (தமிழ்)</option>
             </select>
 
-
-            <button className="notification-btn">
+            <button className="notification-btn" type="button" aria-label="Notifications">
               🔔
             </button>
 
-
-            <div className="profile">
-
+            <div className="profile" onClick={() => handleNavigation("/profile")} style={{ cursor: "pointer" }}>
               <div className="profile-circle">
-                A
+                {userInitial}
               </div>
 
               <div>
-                <strong>Alfiya</strong>
-                <small>User</small>
+                <strong>{userName}</strong>
+                <small>Citizen</small>
               </div>
-
             </div>
 
           </div>
@@ -266,7 +384,9 @@ const sendMessage = async () => {
           </div>
 
           <p>
-            “Not just an AI chatbot — a citizen-focused legal guidance platform.”
+            {language === "Tamil"
+              ? "“இது வெறும் AI சாட்போட் மட்டுமல்ல — குடிமக்களுக்கான சட்ட வழிகாட்டல் தளம்.”"
+              : "“Not just an AI chatbot — a citizen-focused legal guidance platform.”"}
           </p>
 
           <div className="quote-icon quote-end">
@@ -280,11 +400,13 @@ const sendMessage = async () => {
           <div className="section-title">
 
             <h2>
-              Quick Start
+              {language === "Tamil" ? "விரைவு தலைப்புகள்" : "Quick Start"}
             </h2>
 
             <p>
-              Select a topic or describe your legal concern below.
+              {language === "Tamil"
+                ? "ஒரு தலைப்பைத் தேர்ந்தெடுக்கவும் அல்லது உங்கள் சட்ட வினவலை கீழே உள்ளிடவும்."
+                : "Select a topic or describe your legal concern below."}
             </p>
 
           </div>
@@ -297,7 +419,10 @@ const sendMessage = async () => {
               <button
                 className="quick-card"
                 key={index}
-                onClick={() => setMessage(item.title)}
+                onClick={() => {
+                  setMessage(item.title);
+                  sendMessage(item.title);
+                }}
               >
 
                 <div className="quick-icon">
@@ -342,7 +467,7 @@ const sendMessage = async () => {
 
                 <p>
                   <span className="online-dot"></span>
-                  Ready to assist you
+                  {language === "Tamil" ? "உங்களுக்கு உதவ தயார்" : "Ready to assist you"}
                 </p>
 
               </div>
@@ -370,13 +495,13 @@ const sendMessage = async () => {
                 </div>
 
                 <h2>
-                  How can I help you?
+                  {language === "Tamil" ? "நான் உங்களுக்கு எப்படி உதவ முடியும்?" : "How can I help you?"}
                 </h2>
 
                 <p>
-                  Describe your legal problem in simple words.
-                  I can help you understand relevant laws,
-                  rights and general legal information.
+                  {language === "Tamil"
+                    ? "உங்கள் சட்ட பிரச்சனையை எளிய தமிழில் விவரிக்கவும். தொடர்புடைய சட்டங்கள், பிரிவுகள் மற்றும் வழிகாட்டல்களைப் பெறலாம்."
+                    : "Describe your legal problem in simple words. I can help you understand relevant laws, rights and verified citizen guidance."}
                 </p>
 
               </div>
@@ -402,19 +527,51 @@ const sendMessage = async () => {
                       </div>
                     )}
 
-                    <div className="message-bubble">
+                    <div className="message-bubble" style={{ whiteSpace: "pre-line" }}>
                       {item.text}
+
+                      {item.type === "ai" && (
+                        <div style={{ marginTop: "10px", display: "flex", gap: "8px" }}>
+                          <button
+                            type="button"
+                            onClick={() => handleSpeak(item.text, index)}
+                            style={{
+                              background: speakingIndex === index ? "#732918" : "#f1e3c8",
+                              color: speakingIndex === index ? "#fff" : "#4a2d1b",
+                              border: "1px solid #d4b884",
+                              borderRadius: "6px",
+                              padding: "4px 10px",
+                              fontSize: "12px",
+                              cursor: "pointer",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "4px",
+                            }}
+                          >
+                            {speakingIndex === index ? "⏹ Stop Voice" : "🔊 Listen (TTS)"}
+                          </button>
+                        </div>
+                      )}
                     </div>
 
                     {item.type === "user" && (
                       <div className="message-avatar">
-                        A
+                        {userInitial}
                       </div>
                     )}
 
                   </div>
 
                 ))}
+
+                {loading && (
+                  <div className="message ai-message">
+                    <div className="message-avatar">🤖</div>
+                    <div className="message-bubble" style={{ fontStyle: "italic", opacity: 0.8 }}>
+                      {language === "Tamil" ? "சட்ட தரவுத்தளத்தில் தேடுகிறது..." : "Searching legal databases..."}
+                    </div>
+                  </div>
+                )}
 
               </div>
 
@@ -424,28 +581,52 @@ const sendMessage = async () => {
 
           <div className="chat-input-area">
 
-            <button className="attach-btn">
+            <button
+              className="attach-btn"
+              type="button"
+              title="Open Document Scanner"
+              onClick={() => handleNavigation("/scanner")}
+            >
               📎
             </button>
 
-
             <input
               type="text"
-              placeholder="Describe your legal problem..."
+              placeholder={
+                isListening
+                  ? "🎙 Listening... Speak now..."
+                  : language === "Tamil"
+                  ? "உங்கள் சட்ட கேள்வியை உள்ளிடவும்..."
+                  : "Describe your legal problem..."
+              }
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
+              style={{
+                borderColor: isListening ? "#d14318" : undefined,
+                background: isListening ? "#fff9f5" : undefined,
+              }}
             />
 
-
-            <button className="mic-btn">
-              🎙
+            <button
+              className="mic-btn"
+              type="button"
+              onClick={toggleListening}
+              title={isListening ? "Stop listening" : "Start voice speech recognition"}
+              style={{
+                background: isListening ? "#d14318" : undefined,
+                color: isListening ? "#ffffff" : undefined,
+                animation: isListening ? "pulse 1.5s infinite" : undefined,
+              }}
+            >
+              {isListening ? "🔴" : "🎙"}
             </button>
-
 
             <button
               className="send-btn"
-              onClick={sendMessage}
+              type="button"
+              disabled={loading || !message.trim()}
+              onClick={() => sendMessage()}
             >
               ➤
             </button>
